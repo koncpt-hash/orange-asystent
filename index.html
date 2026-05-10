@@ -634,6 +634,35 @@
     </svg>
   </button>
 
+  <!-- Delete zone -->
+  <div id="deleteZone" style="
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) scale(1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(30,30,30,0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: white;
+    padding: 11px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+    z-index: 50;
+    white-space: nowrap;
+  ">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+    </svg>
+    <span id="deleteZoneLabel">Przeciągnij, aby usunąć</span>
+  </div>
+
   <!-- Bottom Sheet -->
   <div class="bottom-sheet" id="bottomSheet">
     <div class="sheet-glow"></div>
@@ -876,6 +905,7 @@ function closeSheet() {
 }
 
 function showFloatingBtn() {
+  if (localStorage.getItem('floatingBtnDeleted') === 'true') return;
   const btn = document.getElementById('floatingBtn');
   btn.style.pointerEvents = 'all';
   btn.style.opacity = '1';
@@ -891,27 +921,27 @@ function hideFloatingBtn() {
 
 (function initFloatingDrag() {
   const btn = document.getElementById('floatingBtn');
+  const zone = document.getElementById('deleteZone');
   const BTN = 56, MARGIN = 16, TOP_OFFSET = 60, BOTTOM_OFFSET = 88;
+  const DELETE_RADIUS = 60;
 
   function snapPositions() {
     const W = window.innerWidth, H = window.innerHeight;
     return [
-      { top: TOP_OFFSET,              left: MARGIN },
-      { top: (H - BTN) / 2,          left: MARGIN },
+      { top: TOP_OFFSET,               left: MARGIN },
+      { top: (H - BTN) / 2,           left: MARGIN },
       { top: H - BTN - BOTTOM_OFFSET, left: MARGIN },
-      { top: TOP_OFFSET,              left: W - BTN - MARGIN },
-      { top: (H - BTN) / 2,          left: W - BTN - MARGIN },
+      { top: TOP_OFFSET,               left: W - BTN - MARGIN },
+      { top: (H - BTN) / 2,           left: W - BTN - MARGIN },
       { top: H - BTN - BOTTOM_OFFSET, left: W - BTN - MARGIN },
     ];
   }
 
   function applyPos(pos, animate) {
-    if (animate) {
-      btn.style.transition = 'opacity 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1), top 0.35s cubic-bezier(0.34,1.56,0.64,1), left 0.35s cubic-bezier(0.34,1.56,0.64,1)';
-    } else {
-      btn.style.transition = 'opacity 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)';
-    }
-    btn.style.top = pos.top + 'px';
+    btn.style.transition = animate
+      ? 'opacity 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1), top 0.35s cubic-bezier(0.34,1.56,0.64,1), left 0.35s cubic-bezier(0.34,1.56,0.64,1)'
+      : 'opacity 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)';
+    btn.style.top  = pos.top  + 'px';
     btn.style.left = pos.left + 'px';
     localStorage.setItem('floatingBtnPos', JSON.stringify(pos));
   }
@@ -921,6 +951,20 @@ function hideFloatingBtn() {
       const d = Math.hypot(cx - (pos.left + BTN / 2), cy - (pos.top + BTN / 2));
       return d < best.d ? { d, pos } : best;
     }, { d: Infinity, pos: snapPositions()[5] }).pos;
+  }
+
+  function deleteZoneCenter() {
+    const r = zone.getBoundingClientRect();
+    const phoneRect = zone.offsetParent.getBoundingClientRect();
+    return {
+      x: r.left - phoneRect.left + r.width / 2,
+      y: r.top  - phoneRect.top  + r.height / 2,
+    };
+  }
+
+  function isOverDelete(cx, cy) {
+    const c = deleteZoneCenter();
+    return Math.hypot(cx - c.x, cy - c.y) < DELETE_RADIUS;
   }
 
   // Restore saved position or default bottom-right
@@ -941,6 +985,7 @@ function hideFloatingBtn() {
     startTop  = parseInt(btn.style.top)  || 0;
     moved = false;
     btn.style.transition = 'opacity 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)';
+    zone.style.opacity = '1';
     e.stopPropagation();
   }, { passive: true });
 
@@ -948,15 +993,43 @@ function hideFloatingBtn() {
     const dx = e.touches[0].clientX - startX;
     const dy = e.touches[0].clientY - startY;
     if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
-    btn.style.left = (startLeft + dx) + 'px';
-    btn.style.top  = (startTop  + dy) + 'px';
+    const newLeft = startLeft + dx;
+    const newTop  = startTop  + dy;
+    btn.style.left = newLeft + 'px';
+    btn.style.top  = newTop  + 'px';
+
+    const cx = newLeft + BTN / 2, cy = newTop + BTN / 2;
+    if (isOverDelete(cx, cy)) {
+      zone.style.background = 'rgba(200,30,30,0.9)';
+      zone.style.transform = 'translateX(-50%) scale(1.08)';
+      btn.style.transform = 'scale(0.7)';
+    } else {
+      zone.style.background = 'rgba(30,30,30,0.88)';
+      zone.style.transform = 'translateX(-50%) scale(1)';
+      btn.style.transform = 'scale(1)';
+    }
   }, { passive: true });
 
   btn.addEventListener('touchend', () => {
+    zone.style.opacity = '0';
+    zone.style.background = 'rgba(30,30,30,0.88)';
+    zone.style.transform = 'translateX(-50%) scale(1)';
+
     if (!moved) { openSheet(); return; }
+
     const cx = parseInt(btn.style.left) + BTN / 2;
     const cy = parseInt(btn.style.top)  + BTN / 2;
-    applyPos(snapNearest(cx, cy), true);
+
+    if (isOverDelete(cx, cy)) {
+      btn.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      btn.style.opacity = '0';
+      btn.style.transform = 'scale(0.3)';
+      localStorage.setItem('floatingBtnDeleted', 'true');
+      localStorage.removeItem('floatingBtnPos');
+    } else {
+      btn.style.transform = 'scale(1)';
+      applyPos(snapNearest(cx, cy), true);
+    }
   });
 })();
 
