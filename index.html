@@ -248,6 +248,17 @@
   .clarify-chip.selected { background: #FF7900; color: white; border-color: #FF7900; }
   .clarify-chip:disabled { cursor: default; opacity: 0.4; }
   .clarify-chip.selected:disabled { opacity: 1; }
+  .clarify-checklist { background: white; border-radius: 16px; overflow: hidden; width: 260px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .clarify-check-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f0f0f0; transition: background 0.15s; -webkit-tap-highlight-color: transparent; }
+  .clarify-check-item:last-of-type { border-bottom: none; }
+  .clarify-check-item:active { background: #fafafa; }
+  .clarify-check-item.checked { background: #fff8f3; }
+  .clarify-checkbox { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #ddd; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; }
+  .clarify-check-item.checked .clarify-checkbox { background: #FF7900; border-color: #FF7900; }
+  .clarify-check-label { font-size: 14px; color: #232323; font-weight: 400; }
+  .clarify-confirm { width: 100%; padding: 12px; background: #FF7900; color: white; font-size: 14px; font-weight: 600; border: none; border-radius: 12px; cursor: pointer; margin-top: 8px; opacity: 0.4; transition: opacity 0.2s; }
+  .clarify-confirm.active { opacity: 1; }
+  .clarify-confirm:disabled { cursor: default; }
 
   .bubble { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 14px; line-height: 20px; }
   .bubble.user { background: #F16E00; color: white; border-bottom-right-radius: 4px; font-weight: 500; }
@@ -1206,18 +1217,64 @@ function showNextClarifyStep() {
   bubble.className = 'bubble ai';
   bubble.textContent = step.q;
 
-  const chipsEl = document.createElement('div');
-  chipsEl.className = 'clarify-chips';
+  // Checklist
+  const checklist = document.createElement('div');
+  checklist.className = 'clarify-checklist';
+
+  const checked = new Set();
+
   step.chips.forEach(label => {
-    const btn = document.createElement('button');
-    btn.className = 'clarify-chip';
-    btn.textContent = label;
-    btn.onclick = () => handleClarifyAnswer(label, chipsEl);
-    chipsEl.appendChild(btn);
+    const item = document.createElement('div');
+    item.className = 'clarify-check-item';
+
+    const box = document.createElement('div');
+    box.className = 'clarify-checkbox';
+    box.innerHTML = '';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'clarify-check-label';
+    lbl.textContent = label;
+
+    item.appendChild(box);
+    item.appendChild(lbl);
+    checklist.appendChild(item);
+
+    item.addEventListener('click', () => {
+      if (checked.has(label)) {
+        checked.delete(label);
+        item.classList.remove('checked');
+        box.innerHTML = '';
+      } else {
+        checked.add(label);
+        item.classList.add('checked');
+        box.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      }
+      confirmBtn.classList.toggle('active', checked.size > 0);
+    });
+  });
+
+  const confirmBtn = document.createElement('button');
+  confirmBtn.className = 'clarify-confirm';
+  confirmBtn.textContent = 'Dalej';
+  confirmBtn.disabled = true;
+
+  confirmBtn.addEventListener('click', () => {
+    if (checked.size === 0) return;
+    // Zablokuj interakcję
+    checklist.querySelectorAll('.clarify-check-item').forEach(i => i.style.pointerEvents = 'none');
+    confirmBtn.disabled = true;
+    confirmBtn.style.opacity = '0.4';
+    handleClarifyAnswer([...checked].join(', '), null);
+  });
+
+  // Aktywuj przycisk tylko gdy coś zaznaczone
+  checklist.addEventListener('click', () => {
+    confirmBtn.disabled = checked.size === 0;
   });
 
   wrap.appendChild(bubble);
-  wrap.appendChild(chipsEl);
+  wrap.appendChild(checklist);
+  wrap.appendChild(confirmBtn);
   row.appendChild(avatar);
   row.appendChild(wrap);
   msgs.appendChild(row);
@@ -1225,10 +1282,12 @@ function showNextClarifyStep() {
 }
 
 function handleClarifyAnswer(answer, chipsEl) {
-  chipsEl.querySelectorAll('.clarify-chip').forEach(b => {
-    b.disabled = true;
-    if (b.textContent === answer) b.classList.add('selected');
-  });
+  if (chipsEl) {
+    chipsEl.querySelectorAll('.clarify-chip').forEach(b => {
+      b.disabled = true;
+      if (b.textContent === answer) b.classList.add('selected');
+    });
+  }
 
   addBubble('user', answer);
   messages.push({ role: 'user', content: answer });
