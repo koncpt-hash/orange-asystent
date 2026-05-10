@@ -102,7 +102,7 @@
   .sheet-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); z-index: 30; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
   .sheet-backdrop.visible { opacity: 1; pointer-events: all; }
 
-  .bottom-sheet { position: absolute; bottom: 0; left: 0; right: 0; height: 580px; background: white; border-radius: 12px 12px 0 0; z-index: 40; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); overflow: hidden; display: flex; flex-direction: column; }
+  .bottom-sheet { position: absolute; bottom: 0; left: 0; right: 0; height: 100%; background: white; border-radius: 0; z-index: 40; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); overflow: hidden; display: flex; flex-direction: column; }
   .bottom-sheet.open { transform: translateY(0); }
 
   .sheet-glow { position: absolute; bottom: -271px; left: 50%; transform: translateX(-50%); width: 577px; height: 363px; border-radius: 50%; background: radial-gradient(circle, rgba(168,133,216,0.2) 0%, rgba(241,94,0,0.1) 40%, transparent 70%); filter: blur(60px); pointer-events: none; opacity: 0.4; z-index: 0; }
