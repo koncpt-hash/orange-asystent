@@ -493,7 +493,7 @@ function restoreConversation(index) {
 
 function fillInput(chip) {
   document.getElementById('chatInput').value = chip.textContent.trim();
-  document.getElementById('chatInput').focus();
+  sendMessage();
 }
 
 function switchToChat() {
