@@ -264,7 +264,10 @@
     <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
     <div class="sheet-title-row">
       <span class="sheet-title">Asystent Orange AI</span>
-      <button class="sheet-close" onclick="closeSheet()"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 2l12 12M14 2L2 14" stroke="#666" stroke-width="2" stroke-linecap="round"/></svg></button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="sheet-close" onclick="resetChat()" title="Zacznij od nowa"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.36 2.64L3 8" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 3v5h5" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="sheet-close" onclick="closeSheet()"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 2l12 12M14 2L2 14" stroke="#666" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
     </div>
 
     <!-- Welcome state -->
@@ -412,6 +415,16 @@ function openSheet() {
 function closeSheet() {
   document.getElementById('backdrop').classList.remove('visible');
   document.getElementById('bottomSheet').classList.remove('open');
+}
+
+function resetChat() {
+  messages = [];
+  document.getElementById('chatMessages').innerHTML = '';
+  document.getElementById('chatInput').value = '';
+  document.getElementById('sheetChat').style.display = 'none';
+  document.getElementById('sheetWelcome').style.display = 'flex';
+  buildChips();
+  startChipAnimations();
 }
 
 function fillInput(chip) {
