@@ -731,42 +731,52 @@ function buildChips() {
 }
 
 function startChipAnimations() {
-  const SPEED = 0.3; // px per frame — jednakowa dla wszystkich rzędów
-  ['chipsScroll1', 'chipsScroll2', 'chipsScroll3'].forEach((id, rowIdx) => {
-    const container = document.getElementById(id);
-    if (!container) return;
+  const SPEED = 0.08; // px per frame — bardzo wolno
+  const ids = ['chipsScroll1', 'chipsScroll2', 'chipsScroll3'];
+  const containers = ids.map(id => document.getElementById(id)).filter(Boolean);
 
-    // każdy rząd zaczyna w innym punkcie żeby nie były zsynchronizowane
-    let pos = rowIdx * 40;
-    let dir = 1;
-    let userTouching = false;
-    let resumeTimer;
+  let sharedPos = 0;
+  let dir = 1;
+  let userTouching = false;
+  let touchStartX = 0;
+  let lastTouchX = 0;
+  let resumeTimer;
 
-    function tick() {
-      if (!userTouching) {
-        const maxScroll = container.scrollWidth - container.clientWidth;
-        if (maxScroll <= 0) { requestAnimationFrame(tick); return; }
-        pos += SPEED * dir;
-        if (pos >= maxScroll) { pos = maxScroll; dir = -1; }
-        else if (pos <= 0)    { pos = 0;         dir =  1; }
-        container.scrollLeft = pos;
-      } else {
-        pos = container.scrollLeft;
+  function tick() {
+    if (!userTouching) {
+      const maxScroll = Math.min(...containers.map(c => c.scrollWidth - c.clientWidth));
+      if (maxScroll > 0) {
+        sharedPos += SPEED * dir;
+        if (sharedPos >= maxScroll) { sharedPos = maxScroll; dir = -1; }
+        else if (sharedPos <= 0)    { sharedPos = 0;         dir =  1; }
+        containers.forEach(c => { c.scrollLeft = sharedPos; });
       }
-      requestAnimationFrame(tick);
     }
-
-    container.addEventListener('touchstart', () => {
-      userTouching = true;
-      clearTimeout(resumeTimer);
-    }, { passive: true });
-
-    container.addEventListener('touchend', () => {
-      resumeTimer = setTimeout(() => { userTouching = false; }, 1200);
-    }, { passive: true });
-
     requestAnimationFrame(tick);
-  });
+  }
+
+  const chipsContainer = document.getElementById('chipsContainer');
+
+  chipsContainer.addEventListener('touchstart', e => {
+    userTouching = true;
+    clearTimeout(resumeTimer);
+    touchStartX = e.touches[0].clientX;
+    lastTouchX = touchStartX;
+  }, { passive: true });
+
+  chipsContainer.addEventListener('touchmove', e => {
+    const dx = lastTouchX - e.touches[0].clientX;
+    lastTouchX = e.touches[0].clientX;
+    const maxScroll = Math.min(...containers.map(c => c.scrollWidth - c.clientWidth));
+    sharedPos = Math.max(0, Math.min(maxScroll, sharedPos + dx));
+    containers.forEach(c => { c.scrollLeft = sharedPos; });
+  }, { passive: true });
+
+  chipsContainer.addEventListener('touchend', () => {
+    resumeTimer = setTimeout(() => { userTouching = false; }, 1500);
+  }, { passive: true });
+
+  requestAnimationFrame(tick);
 }
 
 function updateClock() {
