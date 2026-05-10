@@ -280,39 +280,10 @@
       </svg>
       <div class="sheet-greeting-text">Cześć, <span class="name">Adam!</span></div>
       <div class="sheet-subtitle">Powiedz co chcesz załatwić.</div>
-      <div class="chips-container">
-        <div class="chips-row" style="overflow:hidden;"><div class="chips-inner-1">
-          <div class="chip" onclick="fillInput(this)">Szukam nowego telefonu</div>
-          <div class="chip" onclick="fillInput(this)">Pomoc techniczna</div>
-          <div class="chip" onclick="fillInput(this)">Ile wynosi moja faktura</div>
-          <div class="chip" onclick="fillInput(this)">Przenieś numer do Orange</div>
-          <div class="chip" onclick="fillInput(this)">Usługi dodatkowe</div>
-          <div class="chip" onclick="fillInput(this)">Szukam nowego telefonu</div>
-          <div class="chip" onclick="fillInput(this)">Pomoc techniczna</div>
-          <div class="chip" onclick="fillInput(this)">Ile wynosi moja faktura</div>
-          <div class="chip" onclick="fillInput(this)">Przenieś numer do Orange</div>
-          <div class="chip" onclick="fillInput(this)">Usługi dodatkowe</div>
-        </div></div>
-        <div class="chips-row" style="overflow:hidden;"><div class="chips-inner-2">
-          <div class="chip" onclick="fillInput(this)">Potrzebuję internetu światłowodowego</div>
-          <div class="chip" onclick="fillInput(this)">Potrzebuję kolejnego numeru</div>
-          <div class="chip" onclick="fillInput(this)">Czy mogę kupić telefon na raty?</div>
-          <div class="chip" onclick="fillInput(this)">Ile zapłacę za roaming?</div>
-          <div class="chip" onclick="fillInput(this)">Potrzebuję internetu światłowodowego</div>
-          <div class="chip" onclick="fillInput(this)">Potrzebuję kolejnego numeru</div>
-          <div class="chip" onclick="fillInput(this)">Czy mogę kupić telefon na raty?</div>
-          <div class="chip" onclick="fillInput(this)">Ile zapłacę za roaming?</div>
-        </div></div>
-        <div class="chips-row" style="overflow:hidden;"><div class="chips-inner-3">
-          <div class="chip" onclick="fillInput(this)">Chcę złożyć reklamację</div>
-          <div class="chip" onclick="fillInput(this)">Aktywuj numer na kartę</div>
-          <div class="chip" onclick="fillInput(this)">Porównaj smartfony</div>
-          <div class="chip" onclick="fillInput(this)">Który telefon trzyma najdłużej?</div>
-          <div class="chip" onclick="fillInput(this)">Chcę złożyć reklamację</div>
-          <div class="chip" onclick="fillInput(this)">Aktywuj numer na kartę</div>
-          <div class="chip" onclick="fillInput(this)">Porównaj smartfony</div>
-          <div class="chip" onclick="fillInput(this)">Który telefon trzyma najdłużej?</div>
-        </div></div>
+      <div class="chips-container" id="chipsContainer">
+        <div class="chips-row" style="overflow:hidden;"><div class="chips-inner-1" id="chipsRow1"></div></div>
+        <div class="chips-row" style="overflow:hidden;"><div class="chips-inner-2" id="chipsRow2"></div></div>
+        <div class="chips-row" style="overflow:hidden;"><div class="chips-inner-3" id="chipsRow3"></div></div>
       </div>
     </div>
 
@@ -334,6 +305,45 @@
 </div>
 
 <script>
+const FIXED_CHIPS = [
+  'Sprawdź moje płatności',
+  'Potrzebuję kolejnego numeru',
+  'Szukam nowego telefonu',
+  'Chcę zgłosić problem',
+];
+
+const RANDOM_CHIPS = [
+  'Którą prędkość światłowodu wybrać?',
+  'Chcę nowy telefon z numerem',
+  'Jakie masz telefony do 2000 zł?',
+  'Android czy iPhone - który lepszy?',
+  'Jaki plan pasuje do mojego zużycia?',
+  'Porównaj iPhone 15 i 16',
+  'Aktywuj roaming',
+  'Szukam telefonu na raty',
+  'Jak mogę obniżyć rachunki?',
+  'Internet działa mi wolno',
+  'Doradź mi pakiet',
+  'Ile internetu mi zostało?',
+  'Chcę internet z telewizją',
+  'Potrzebuję TV do filmów i seriali',
+  'Który telefon trzyma najdłużej na baterii?',
+  'Pracuję z domu i muszę mieć stabilny internet',
+  'Wieczorami chcę oglądać seriale',
+];
+
+function buildChips() {
+  const shuffled = [...RANDOM_CHIPS].sort(() => Math.random() - 0.5);
+  const chips = [...FIXED_CHIPS, ...shuffled.slice(0, 5)];
+  const rows = [chips.slice(0, 3), chips.slice(3, 6), chips.slice(6, 9)];
+  ['chipsRow1', 'chipsRow2', 'chipsRow3'].forEach((id, i) => {
+    const doubled = [...rows[i], ...rows[i]];
+    document.getElementById(id).innerHTML = doubled
+      .map(t => `<div class="chip" onclick="fillInput(this)">${t}</div>`)
+      .join('');
+  });
+}
+
 function updateClock() {
   const now = new Date();
   document.getElementById('clock').textContent =
@@ -342,6 +352,7 @@ function updateClock() {
 }
 updateClock();
 setInterval(updateClock, 10000);
+buildChips();
 
 const SYSTEM_PROMPT = `Jesteś Asystentem Orange AI — inteligentnym doradcą w aplikacji Mój Orange.
 
