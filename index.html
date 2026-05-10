@@ -248,7 +248,10 @@
   .clarify-chip.selected { background: #FF7900; color: white; border-color: #FF7900; }
   .clarify-chip:disabled { cursor: default; opacity: 0.4; }
   .clarify-chip.selected:disabled { opacity: 1; }
-  .clarify-checklist { background: white; border-radius: 16px; overflow: hidden; width: 100%; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  #clarifyPanel { display: none; margin: 0 16px; background: white; border: 2px solid #a885d8; border-bottom: none; border-radius: 16px 16px 0 0; overflow: hidden; flex-shrink: 0; }
+  #clarifyPanel.active { display: block; }
+  #sheetInputInner.panel-open { border-top-left-radius: 0; border-top-right-radius: 0; border-top-color: transparent; }
+  .clarify-checklist { background: white; width: 100%; }
   .clarify-check-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f0f0f0; -webkit-tap-highlight-color: transparent; }
   .clarify-check-item:last-of-type { border-bottom: none; }
   .clarify-checkbox { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #ddd; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; }
@@ -719,9 +722,12 @@
       <div class="chat-messages" id="chatMessages"></div>
     </div>
 
+    <!-- Clarify panel (above input) -->
+    <div id="clarifyPanel"></div>
+
     <!-- Input (zawsze widoczny) -->
-    <div class="sheet-input-area">
-      <div class="sheet-input-inner">
+    <div class="sheet-input-area" id="sheetInputArea">
+      <div class="sheet-input-inner" id="sheetInputInner">
         <input class="sheet-input" id="chatInput" placeholder="Zapytaj Asystenta Orange AI" type="text" autocomplete="off"/>
         <button class="send-btn" id="sendBtn" onclick="sendMessage()">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1243,6 +1249,15 @@ function showNextClarifyStep() {
   bubble.className = 'bubble ai';
   bubble.textContent = step.q;
 
+  wrap.appendChild(bubble);
+  row.appendChild(avatar);
+  row.appendChild(wrap);
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  // Build checklist in panel above input
+  const panel = document.getElementById('clarifyPanel');
+  panel.innerHTML = '';
   const checklist = document.createElement('div');
   checklist.className = 'clarify-checklist';
   activeFlow.currentChecklistEl = checklist;
@@ -1276,12 +1291,9 @@ function showNextClarifyStep() {
     });
   });
 
-  wrap.appendChild(bubble);
-  wrap.appendChild(checklist);
-  row.appendChild(avatar);
-  row.appendChild(wrap);
-  msgs.appendChild(row);
-  msgs.scrollTop = msgs.scrollHeight;
+  panel.appendChild(checklist);
+  panel.classList.add('active');
+  document.getElementById('sheetInputInner').classList.add('panel-open');
 }
 
 
@@ -1403,9 +1415,10 @@ async function sendMessage() {
 
   // Intercept when clarifying flow is active
   if (activeFlow) {
-    if (activeFlow.currentChecklistEl) {
-      activeFlow.currentChecklistEl.querySelectorAll('.clarify-check-item').forEach(i => i.style.pointerEvents = 'none');
-    }
+    const panel = document.getElementById('clarifyPanel');
+    panel.classList.remove('active');
+    panel.innerHTML = '';
+    document.getElementById('sheetInputInner').classList.remove('panel-open');
     input.value = '';
     handleClarifyAnswer(text, null);
     return;
