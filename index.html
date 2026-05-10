@@ -241,6 +241,13 @@
 
   .bubble-row { display: flex; align-items: flex-end; gap: 8px; }
   .bubble-row.user { justify-content: flex-end; }
+  .bubble-row.top { align-items: flex-start; }
+  .clarify-wrap { display: flex; flex-direction: column; gap: 10px; }
+  .clarify-chips { display: flex; flex-wrap: wrap; gap: 8px; max-width: 280px; }
+  .clarify-chip { background: white; border-radius: 80px; padding: 7px 13px; font-size: 13px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; border: 1.5px solid #FF7900; transition: opacity 0.2s, background 0.2s, color 0.2s; }
+  .clarify-chip.selected { background: #FF7900; color: white; border-color: #FF7900; }
+  .clarify-chip:disabled { cursor: default; opacity: 0.4; }
+  .clarify-chip.selected:disabled { opacity: 1; }
 
   .bubble { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 14px; line-height: 20px; }
   .bubble.user { background: #F16E00; color: white; border-bottom-right-radius: 4px; font-weight: 500; }
@@ -1153,9 +1160,111 @@ function restoreConversation(index) {
   document.getElementById('sheetChat').style.display = 'flex';
 }
 
+const CLARIFYING_FLOWS = {
+  'Potrzebuję kolejnego numeru': [
+    { q: 'Dla kogo potrzebujesz nowego numeru?',   chips: ['Dla mnie', 'Dla dziecka', 'Dla bliskiej osoby', 'Do pracy'] },
+    { q: 'Potrzebujesz też telefonu?',              chips: ['Tak, z telefonem', 'Nie, sam numer', 'Jeszcze nie wiem'] },
+    { q: 'Co jest dla Ciebie najważniejsze?',       chips: ['Niska cena', 'Dużo internetu', 'Telefon w ratach', 'Oferta dla rodziny', 'Bez limitu internetu'] },
+  ],
+};
+
+let activeFlow = null;
+
 function fillInput(chip) {
-  document.getElementById('chatInput').value = chip.textContent.trim();
+  const text = chip.textContent.trim();
+  if (CLARIFYING_FLOWS[text]) {
+    startClarifyingFlow(text, CLARIFYING_FLOWS[text]);
+    return;
+  }
+  document.getElementById('chatInput').value = text;
   sendMessage();
+}
+
+function startClarifyingFlow(initialText, steps) {
+  switchToChat();
+  addBubble('user', initialText);
+  messages.push({ role: 'user', content: initialText });
+  activeFlow = { steps, stepIndex: 0 };
+  showNextClarifyStep();
+}
+
+function showNextClarifyStep() {
+  const step = activeFlow.steps[activeFlow.stepIndex];
+  messages.push({ role: 'assistant', content: step.q });
+
+  const msgs = document.getElementById('chatMessages');
+  const row = document.createElement('div');
+  row.className = 'bubble-row ai top';
+
+  const avatar = document.createElement('div');
+  avatar.className = 'ai-avatar';
+  avatar.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="white"/></svg>';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'clarify-wrap';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble ai';
+  bubble.textContent = step.q;
+
+  const chipsEl = document.createElement('div');
+  chipsEl.className = 'clarify-chips';
+  step.chips.forEach(label => {
+    const btn = document.createElement('button');
+    btn.className = 'clarify-chip';
+    btn.textContent = label;
+    btn.onclick = () => handleClarifyAnswer(label, chipsEl);
+    chipsEl.appendChild(btn);
+  });
+
+  wrap.appendChild(bubble);
+  wrap.appendChild(chipsEl);
+  row.appendChild(avatar);
+  row.appendChild(wrap);
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function handleClarifyAnswer(answer, chipsEl) {
+  chipsEl.querySelectorAll('.clarify-chip').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === answer) b.classList.add('selected');
+  });
+
+  addBubble('user', answer);
+  messages.push({ role: 'user', content: answer });
+
+  activeFlow.stepIndex++;
+  if (activeFlow.stepIndex < activeFlow.steps.length) {
+    showNextClarifyStep();
+  } else {
+    activeFlow = null;
+    finalizeClarifyingFlow();
+  }
+}
+
+async function finalizeClarifyingFlow() {
+  addTypingIndicator();
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, system: SYSTEM_PROMPT }),
+    });
+    const data = await response.json();
+    removeTypingIndicator();
+    const reply = data.content?.[0]?.text || 'Przepraszam, coś poszło nie tak.';
+    messages.push({ role: 'assistant', content: reply });
+    addBubble('ai', reply);
+  } catch (err) {
+    removeTypingIndicator();
+    addBubble('ai', 'Przepraszam, wystąpił problem z połączeniem.');
+  }
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('chatInput').focus();
 }
 
 function switchToChat() {
