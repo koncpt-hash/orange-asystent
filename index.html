@@ -122,7 +122,7 @@
   .sheet-greeting-text span.name { color: #F15E00; }
   .sheet-subtitle { font-size: 15px; font-weight: 500; color: #333; line-height: 22px; flex-shrink: 0; }
 
-  .chips-container { margin-top: 18px; height: 136px; overflow: hidden; flex-shrink: 0; }
+  .chips-container { margin-top: 18px; height: 136px; overflow: hidden; flex-shrink: 0; align-self: stretch; }
   .chips-row { display: flex; gap: 8px; margin-bottom: 8px; overflow: hidden; }
   .chip { flex-shrink: 0; background: white; border-radius: 80px; padding: 9px 14px; font-size: 14px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 1.5px rgba(0,0,0,0.12), 0 2px 12px rgba(0,0,0,0.08); border: 1.5px solid #a885d8; -webkit-tap-highlight-color: transparent; }
   .chip:active { transform: scale(0.96); opacity: 0.8; }
@@ -332,14 +332,20 @@ function buildChips() {
   const shuffled = [...RANDOM_CHIPS].sort(() => Math.random() - 0.5);
   const chips = [...FIXED_CHIPS, ...shuffled.slice(0, 5)];
   const rows = [chips.slice(0, 3), chips.slice(3, 6), chips.slice(6, 9)];
-  const speeds = [20, 25, 18];
 
   ['chipsRow1', 'chipsRow2', 'chipsRow3'].forEach((id, i) => {
     const el = document.getElementById(id);
     el.innerHTML = rows[i]
       .map(t => `<div class="chip" onclick="fillInput(this)">${t}</div>`)
       .join('');
+  });
+}
 
+function startChipAnimations() {
+  const speeds = [20, 25, 18];
+  ['chipsRow1', 'chipsRow2', 'chipsRow3'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.style.animation = 'none';
     requestAnimationFrame(() => {
       const dist = el.scrollWidth - el.parentElement.offsetWidth;
       if (dist > 0) {
@@ -397,7 +403,10 @@ let isLoading = false;
 function openSheet() {
   document.getElementById('backdrop').classList.add('visible');
   document.getElementById('bottomSheet').classList.add('open');
-  setTimeout(() => document.getElementById('chatInput').focus(), 450);
+  setTimeout(() => {
+    startChipAnimations();
+    document.getElementById('chatInput').focus();
+  }, 450);
 }
 
 function closeSheet() {
