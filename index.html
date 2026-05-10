@@ -112,6 +112,17 @@
 
   .sheet-title-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 0; flex-shrink: 0; position: relative; z-index: 1; }
   .sheet-title { font-size: 14px; font-weight: 500; color: #666; }
+
+  /* History panel */
+  .sheet-history { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; }
+  .history-list { flex: 1; overflow-y: auto; padding: 8px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .history-list::-webkit-scrollbar { display: none; }
+  .history-empty { padding: 48px 16px; text-align: center; color: #999; font-size: 15px; }
+  .history-item { background: #f8f8f8; border-radius: 12px; padding: 14px 16px; cursor: pointer; border: 1px solid #eee; transition: background 0.15s; }
+  .history-item:active { background: #f0f0f0; }
+  .history-msg { font-size: 14px; color: #232323; font-weight: 500; line-height: 20px; margin-bottom: 4px; }
+  .history-meta { font-size: 12px; color: #999; display: flex; justify-content: space-between; }
+  .history-section-title { font-size: 13px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 0 4px; }
   .sheet-close { width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: transparent; border: none; }
   .sheet-close:active { background: #f5f5f5; }
 
@@ -265,6 +276,7 @@
     <div class="sheet-title-row">
       <span class="sheet-title">Asystent Orange AI</span>
       <div style="display:flex;gap:8px;align-items:center;">
+        <button class="sheet-close" onclick="showHistory()" title="Historia"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#666" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="sheet-close" onclick="resetChat()" title="Zacznij od nowa"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.36 2.64L3 8" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 3v5h5" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="sheet-close" onclick="closeSheet()"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 2l12 12M14 2L2 14" stroke="#666" stroke-width="2" stroke-linecap="round"/></svg></button>
       </div>
@@ -284,6 +296,11 @@
         <div class="chips-row" style="overflow:hidden;"><div class="chips-inner-2" id="chipsRow2"></div></div>
         <div class="chips-row" style="overflow:hidden;"><div class="chips-inner-3" id="chipsRow3"></div></div>
       </div>
+    </div>
+
+    <!-- History state -->
+    <div class="sheet-history" id="sheetHistory" style="display:none;">
+      <div class="history-list" id="historyList"></div>
     </div>
 
     <!-- Chat state -->
@@ -413,18 +430,65 @@ function openSheet() {
 }
 
 function closeSheet() {
+  saveConversation();
   document.getElementById('backdrop').classList.remove('visible');
   document.getElementById('bottomSheet').classList.remove('open');
 }
 
+function saveConversation() {
+  if (messages.length === 0) return;
+  const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+  history.unshift({ date: new Date().toISOString(), messages: [...messages] });
+  localStorage.setItem('chatHistory', JSON.stringify(history.slice(0, 30)));
+}
+
 function resetChat() {
+  saveConversation();
   messages = [];
   document.getElementById('chatMessages').innerHTML = '';
   document.getElementById('chatInput').value = '';
   document.getElementById('sheetChat').style.display = 'none';
+  document.getElementById('sheetHistory').style.display = 'none';
   document.getElementById('sheetWelcome').style.display = 'flex';
   buildChips();
   startChipAnimations();
+}
+
+function showHistory() {
+  const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+  const list = document.getElementById('historyList');
+
+  if (history.length === 0) {
+    list.innerHTML = '<div class="history-empty">Brak zapisanych rozmów</div>';
+  } else {
+    list.innerHTML = history.map((conv, i) => {
+      const firstMsg = conv.messages.find(m => m.role === 'user')?.content || '';
+      const msgCount = conv.messages.filter(m => m.role === 'user').length;
+      const date = new Date(conv.date).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      return `<div class="history-item" onclick="restoreConversation(${i})">
+        <div class="history-msg">${firstMsg.length > 50 ? firstMsg.slice(0, 50) + '…' : firstMsg}</div>
+        <div class="history-meta"><span>${date}</span><span>${msgCount} ${msgCount === 1 ? 'wiadomość' : 'wiadomości'}</span></div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('sheetWelcome').style.display = 'none';
+  document.getElementById('sheetChat').style.display = 'none';
+  document.getElementById('sheetHistory').style.display = 'flex';
+}
+
+function restoreConversation(index) {
+  const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+  const conv = history[index];
+  if (!conv) return;
+  saveConversation();
+  messages = [...conv.messages];
+  const chatMessages = document.getElementById('chatMessages');
+  chatMessages.innerHTML = '';
+  messages.forEach(m => addBubble(m.role === 'user' ? 'user' : 'ai', m.content));
+  document.getElementById('sheetHistory').style.display = 'none';
+  document.getElementById('sheetWelcome').style.display = 'none';
+  document.getElementById('sheetChat').style.display = 'flex';
 }
 
 function fillInput(chip) {
