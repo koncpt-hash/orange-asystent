@@ -227,11 +227,10 @@
   .sheet-subtitle { font-size: 15px; font-weight: 500; color: #333; line-height: 22px; flex-shrink: 0; }
 
   .chips-container { margin-top: 18px; height: 136px; overflow: hidden; flex-shrink: 0; align-self: stretch; }
-  .chips-row { display: flex; gap: 8px; margin-bottom: 8px; overflow: hidden; }
+  .chips-row { display: flex; gap: 8px; margin-bottom: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-behavior: auto; }
+  .chips-row::-webkit-scrollbar { display: none; }
   .chip { flex-shrink: 0; background: white; border-radius: 80px; padding: 9px 14px; font-size: 14px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 1.5px rgba(0,0,0,0.12), 0 2px 12px rgba(0,0,0,0.08); border: 1.5px solid #a885d8; -webkit-tap-highlight-color: transparent; }
   .chip:active { transform: scale(0.96); opacity: 0.8; }
-
-  @keyframes pingpong { 0% { transform: translateX(0); } 100% { transform: translateX(var(--ping-dist, 0px)); } }
   .chips-inner-1, .chips-inner-2, .chips-inner-3 { display: flex; gap: 8px; width: max-content; }
 
   /* Chat */
@@ -629,9 +628,9 @@
       <div class="sheet-greeting-text">Cześć, <span class="name">Adam!</span></div>
       <div class="sheet-subtitle">Powiedz co chcesz załatwić.</div>
       <div class="chips-container" id="chipsContainer">
-        <div class="chips-row" style="overflow:hidden;"><div class="chips-inner-1" id="chipsRow1"></div></div>
-        <div class="chips-row" style="overflow:hidden;"><div class="chips-inner-2" id="chipsRow2"></div></div>
-        <div class="chips-row" style="overflow:hidden;"><div class="chips-inner-3" id="chipsRow3"></div></div>
+        <div class="chips-row" id="chipsScroll1"><div class="chips-inner-1" id="chipsRow1"></div></div>
+        <div class="chips-row" id="chipsScroll2"><div class="chips-inner-2" id="chipsRow2"></div></div>
+        <div class="chips-row" id="chipsScroll3"><div class="chips-inner-3" id="chipsRow3"></div></div>
       </div>
     </div>
 
@@ -732,17 +731,41 @@ function buildChips() {
 }
 
 function startChipAnimations() {
-  const speeds = [20, 25, 18];
-  ['chipsRow1', 'chipsRow2', 'chipsRow3'].forEach((id, i) => {
-    const el = document.getElementById(id);
-    el.style.animation = 'none';
-    requestAnimationFrame(() => {
-      const dist = el.scrollWidth - el.parentElement.offsetWidth;
-      if (dist > 0) {
-        el.style.setProperty('--ping-dist', `-${dist}px`);
-        el.style.animation = `pingpong ${speeds[i]}s ease-in-out infinite alternate`;
+  const SPEED = 0.3; // px per frame — jednakowa dla wszystkich rzędów
+  ['chipsScroll1', 'chipsScroll2', 'chipsScroll3'].forEach((id, rowIdx) => {
+    const container = document.getElementById(id);
+    if (!container) return;
+
+    // każdy rząd zaczyna w innym punkcie żeby nie były zsynchronizowane
+    let pos = rowIdx * 40;
+    let dir = 1;
+    let userTouching = false;
+    let resumeTimer;
+
+    function tick() {
+      if (!userTouching) {
+        const maxScroll = container.scrollWidth - container.clientWidth;
+        if (maxScroll <= 0) { requestAnimationFrame(tick); return; }
+        pos += SPEED * dir;
+        if (pos >= maxScroll) { pos = maxScroll; dir = -1; }
+        else if (pos <= 0)    { pos = 0;         dir =  1; }
+        container.scrollLeft = pos;
+      } else {
+        pos = container.scrollLeft;
       }
-    });
+      requestAnimationFrame(tick);
+    }
+
+    container.addEventListener('touchstart', () => {
+      userTouching = true;
+      clearTimeout(resumeTimer);
+    }, { passive: true });
+
+    container.addEventListener('touchend', () => {
+      resumeTimer = setTimeout(() => { userTouching = false; }, 1200);
+    }, { passive: true });
+
+    requestAnimationFrame(tick);
   });
 }
 
