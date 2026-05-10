@@ -227,7 +227,7 @@
   .sheet-greeting-text span.name { color: #F15E00; }
   .sheet-subtitle { font-size: 15px; font-weight: 500; color: #333; line-height: 22px; flex-shrink: 0; }
 
-  .chips-container { margin-top: 18px; height: 136px; overflow: hidden; flex-shrink: 0; align-self: stretch; }
+  .chips-container { height: 136px; overflow: hidden; flex-shrink: 0; align-self: stretch; }
   .chips-row { display: flex; gap: 8px; margin-bottom: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-behavior: auto; }
   .chips-row::-webkit-scrollbar { display: none; }
   .chip { flex-shrink: 0; background: white; border-radius: 80px; padding: 9px 14px; font-size: 14px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 1.5px rgba(0,0,0,0.12), 0 2px 12px rgba(0,0,0,0.08); border: 1.5px solid #a885d8; -webkit-tap-highlight-color: transparent; }
@@ -659,11 +659,13 @@
       </svg>
       <div class="sheet-greeting-text">Cześć, <span class="name">Adam!</span></div>
       <div class="sheet-subtitle">Powiedz co chcesz załatwić.</div>
+      <div style="flex:1"></div>
       <div class="chips-container" id="chipsContainer">
         <div class="chips-row" id="chipsScroll1"><div class="chips-inner-1" id="chipsRow1"></div></div>
         <div class="chips-row" id="chipsScroll2"><div class="chips-inner-2" id="chipsRow2"></div></div>
         <div class="chips-row" id="chipsScroll3"><div class="chips-inner-3" id="chipsRow3"></div></div>
       </div>
+      <div style="flex:1"></div>
     </div>
 
     <!-- History state -->
