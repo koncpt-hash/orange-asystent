@@ -127,12 +127,8 @@
   .chip { flex-shrink: 0; background: white; border-radius: 80px; padding: 9px 14px; font-size: 14px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 1.5px rgba(0,0,0,0.12), 0 2px 12px rgba(0,0,0,0.08); border: 1.5px solid #a885d8; -webkit-tap-highlight-color: transparent; }
   .chip:active { transform: scale(0.96); opacity: 0.8; }
 
-  @keyframes scrollLeft1 { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-  @keyframes scrollLeft2 { 0% { transform: translateX(-20px); } 100% { transform: translateX(calc(-50% - 20px)); } }
-  @keyframes scrollLeft3 { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-  .chips-inner-1 { display: flex; gap: 8px; animation: scrollLeft1 30s linear infinite; width: max-content; }
-  .chips-inner-2 { display: flex; gap: 8px; animation: scrollLeft2 38s linear infinite; width: max-content; }
-  .chips-inner-3 { display: flex; gap: 8px; animation: scrollLeft3 25s linear infinite; width: max-content; }
+  @keyframes pingpong { 0% { transform: translateX(0); } 100% { transform: translateX(var(--ping-dist, 0px)); } }
+  .chips-inner-1, .chips-inner-2, .chips-inner-3 { display: flex; gap: 8px; width: max-content; }
 
   /* Chat */
   .sheet-chat { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; }
@@ -336,11 +332,21 @@ function buildChips() {
   const shuffled = [...RANDOM_CHIPS].sort(() => Math.random() - 0.5);
   const chips = [...FIXED_CHIPS, ...shuffled.slice(0, 5)];
   const rows = [chips.slice(0, 3), chips.slice(3, 6), chips.slice(6, 9)];
+  const speeds = [20, 25, 18];
+
   ['chipsRow1', 'chipsRow2', 'chipsRow3'].forEach((id, i) => {
-    const doubled = [...rows[i], ...rows[i]];
-    document.getElementById(id).innerHTML = doubled
+    const el = document.getElementById(id);
+    el.innerHTML = rows[i]
       .map(t => `<div class="chip" onclick="fillInput(this)">${t}</div>`)
       .join('');
+
+    requestAnimationFrame(() => {
+      const dist = el.scrollWidth - el.parentElement.offsetWidth;
+      if (dist > 0) {
+        el.style.setProperty('--ping-dist', `-${dist}px`);
+        el.style.animation = `pingpong ${speeds[i]}s ease-in-out infinite alternate`;
+      }
+    });
   });
 }
 
