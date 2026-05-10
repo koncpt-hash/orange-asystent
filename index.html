@@ -262,9 +262,11 @@
 
   .bubble { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 14px; line-height: 20px; }
   .bubble.user { background: #eeeeee; color: #232323; border-radius: 12px 2px 12px 12px; padding: 8px 12px; font-weight: 500; font-size: 14px; line-height: 20px; }
-  .bubble.ai { background: #F5F5F5; color: #232323; border-bottom-left-radius: 4px; }
+  .bubble.ai { background: transparent; color: #333; padding: 0; border-radius: 0; font-size: 14px; line-height: 20px; font-weight: 500; max-width: 100%; }
 
-  .ai-avatar { width: 28px; height: 28px; background: linear-gradient(135deg, #FF7900, #a885d8); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ai-msg { display: flex; flex-direction: column; gap: 6px; max-width: 88%; }
+  .ai-msg-icon { width: 24px; height: 24px; flex-shrink: 0; }
+  .ai-avatar { display: none; }
 
   .typing-wrap { display: flex; flex-direction: column; gap: 4px; }
   .agent-status { display: flex; align-items: center; gap: 5px; }
@@ -1204,11 +1206,11 @@ function showNextClarifyStep() {
 
   const msgs = document.getElementById('chatMessages');
   const row = document.createElement('div');
-  row.className = 'bubble-row ai top';
+  row.className = 'ai-msg';
 
   const avatar = document.createElement('div');
-  avatar.className = 'ai-avatar';
-  avatar.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="white"/></svg>';
+  avatar.className = 'ai-msg-icon';
+  avatar.innerHTML = AI_ICON_SVG;
 
   const wrap = document.createElement('div');
   wrap.className = 'clarify-wrap';
@@ -1281,6 +1283,7 @@ function showNextClarifyStep() {
   msgs.scrollTop = msgs.scrollHeight;
 }
 
+
 function handleClarifyAnswer(answer, chipsEl) {
   if (chipsEl) {
     chipsEl.querySelectorAll('.clarify-chip').forEach(b => {
@@ -1330,45 +1333,60 @@ function switchToChat() {
   document.getElementById('sheetChat').style.display = 'flex';
 }
 
+const AI_ICON_SVG = `<svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M24 30.8607C27.6922 30.8607 32 35.1685 32 38.8607C32 35.1685 36.3078 30.8607 40 30.8607C36.3078 30.8607 32 26.5528 32 22.8607C32 26.5528 27.6922 30.8607 24 30.8607Z" fill="#FF7900"/>
+  <path d="M23.5163 7.10217C26.3971 7.10217 29.7582 10.4632 29.7582 13.344C29.7582 10.4632 33.1192 7.10217 36 7.10217C33.1192 7.10217 29.7582 3.74109 29.7582 0.860352C29.7582 3.74109 26.3971 7.10217 23.5163 7.10217Z" fill="#FF7900"/>
+  <path d="M33.0334 18.9624C25.4106 18.9624 16.5167 27.8563 16.5167 35.4791C16.5167 27.8563 7.62283 18.9624 0 18.9624C7.62283 18.9624 16.5167 10.0686 16.5167 2.4458C16.5167 10.0686 25.4106 18.9624 33.0334 18.9624Z" fill="#FF7900"/>
+  <rect width="12.4578" height="2.77601" transform="matrix(0.690629 -0.72321 0.723213 0.690625 14.1865 25.5254)" fill="white"/>
+</svg>`;
+
 function addBubble(role, text) {
   const msgs = document.getElementById('chatMessages');
-  const row = document.createElement('div');
-  row.className = 'bubble-row ' + role;
   if (role === 'ai') {
-    const avatar = document.createElement('div');
-    avatar.className = 'ai-avatar';
-    avatar.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="white"/></svg>';
-    row.appendChild(avatar);
+    const wrap = document.createElement('div');
+    wrap.className = 'ai-msg';
+    const icon = document.createElement('div');
+    icon.className = 'ai-msg-icon';
+    icon.innerHTML = AI_ICON_SVG;
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble ai';
+    bubble.textContent = text;
+    wrap.appendChild(icon);
+    wrap.appendChild(bubble);
+    msgs.appendChild(wrap);
+  } else {
+    const row = document.createElement('div');
+    row.className = 'bubble-row user';
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble user';
+    bubble.textContent = text;
+    row.appendChild(bubble);
+    msgs.appendChild(row);
   }
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble ' + role;
-  bubble.textContent = text;
-  row.appendChild(bubble);
-  msgs.appendChild(row);
   msgs.scrollTop = msgs.scrollHeight;
 }
 
 function addTypingIndicator() {
   const msgs = document.getElementById('chatMessages');
-  const row = document.createElement('div');
-  row.className = 'bubble-row ai';
-  row.id = 'typingRow';
-  const avatar = document.createElement('div');
-  avatar.className = 'ai-avatar';
-  avatar.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="white"/></svg>';
   const wrap = document.createElement('div');
-  wrap.className = 'typing-wrap';
+  wrap.className = 'ai-msg';
+  wrap.id = 'typingRow';
+  const icon = document.createElement('div');
+  icon.className = 'ai-msg-icon';
+  icon.innerHTML = AI_ICON_SVG;
+  const inner = document.createElement('div');
+  inner.className = 'typing-wrap';
   const status = document.createElement('div');
   status.className = 'agent-status';
   status.innerHTML = '<div class="agent-status-dot"></div><span class="agent-status-text">Asystent analizuje Twój profil...</span>';
   const dots = document.createElement('div');
   dots.className = 'typing-dots';
   dots.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-  wrap.appendChild(status);
-  wrap.appendChild(dots);
-  row.appendChild(avatar);
-  row.appendChild(wrap);
-  msgs.appendChild(row);
+  inner.appendChild(status);
+  inner.appendChild(dots);
+  wrap.appendChild(icon);
+  wrap.appendChild(inner);
+  msgs.appendChild(wrap);
   msgs.scrollTop = msgs.scrollHeight;
 }
 
