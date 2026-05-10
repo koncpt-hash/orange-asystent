@@ -801,9 +801,54 @@ function openSheet() {
 
 function closeSheet() {
   saveConversation();
+  const sheet = document.getElementById('bottomSheet');
+  sheet.style.transform = '';
+  sheet.style.transition = '';
   document.getElementById('backdrop').classList.remove('visible');
-  document.getElementById('bottomSheet').classList.remove('open');
+  sheet.classList.remove('open');
 }
+
+(function initSwipe() {
+  const sheet = document.getElementById('bottomSheet');
+  const handle = sheet.querySelector('.sheet-handle');
+  const titleRow = sheet.querySelector('.sheet-title-row');
+  const CLOSE_THRESHOLD = 120;
+  let startY = 0, currentY = 0, dragging = false;
+
+  function onStart(e) {
+    if (!sheet.classList.contains('open')) return;
+    startY = e.touches[0].clientY;
+    currentY = 0;
+    dragging = true;
+    sheet.style.transition = 'none';
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy < 0) return;
+    currentY = dy;
+    sheet.style.transform = `translateY(${dy}px)`;
+    e.preventDefault();
+  }
+
+  function onEnd() {
+    if (!dragging) return;
+    dragging = false;
+    sheet.style.transition = '';
+    if (currentY > CLOSE_THRESHOLD) {
+      closeSheet();
+    } else {
+      sheet.style.transform = 'translateY(0)';
+    }
+  }
+
+  [handle, titleRow].forEach(el => {
+    el.addEventListener('touchstart', onStart, { passive: true });
+  });
+  sheet.addEventListener('touchmove', onMove, { passive: false });
+  sheet.addEventListener('touchend', onEnd);
+})();
 
 function saveConversation() {
   if (messages.length === 0) return;
