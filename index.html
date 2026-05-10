@@ -665,27 +665,27 @@
 <script>
 function showNav(screen) {
   const tabs = ['start', 'dlaciebie', 'zarzadzaj', 'sklep', 'ustawienia'];
-  const icons = { start: '#F16E00', dlaciebie: 'none', zarzadzaj: 'none', sklep: 'none', ustawienia: 'none' };
   tabs.forEach(t => {
     document.getElementById('tabl-' + t).classList.remove('active');
     const icon = document.getElementById('tabi-' + t);
-    if (icon) icon.setAttribute('stroke', '#000');
+    if (icon) { icon.setAttribute('stroke', '#000'); icon.setAttribute('fill', 'none'); }
   });
   document.getElementById('tabl-' + screen).classList.add('active');
 
-  document.getElementById('screenSklep').classList.remove('active');
   const startContent = document.querySelector('.content');
+  const statusBar = document.querySelector('.status-bar');
+  document.getElementById('screenSklep').classList.remove('active');
+
   if (screen === 'sklep') {
     startContent.style.display = 'none';
+    statusBar.style.display = 'none';
     document.getElementById('screenSklep').classList.add('active');
-    const icon = document.getElementById('tabi-sklep');
-    if (icon) icon.setAttribute('stroke', '#F16E00');
-    icon.setAttribute('fill', 'none');
+    document.getElementById('tabi-sklep').setAttribute('stroke', '#F16E00');
   } else {
     startContent.style.display = 'block';
+    statusBar.style.display = 'flex';
     if (screen === 'start') {
-      const icon = document.getElementById('tabi-start');
-      if (icon) icon.setAttribute('fill', '#F16E00');
+      document.getElementById('tabi-start').setAttribute('fill', '#F16E00');
     }
   }
 }
