@@ -98,6 +98,77 @@
   .tab-label.active { color: #F16E00; }
   .home-indicator { width: 134px; height: 5px; background: #000; border-radius: 5px; margin: 4px auto 2px; }
 
+  /* ========== SCREENS ========== */
+  .screen { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 2; display: none; flex-direction: column; background: #f5f5f5; }
+  .screen.active { display: flex; }
+  .screen-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 80px; }
+  .screen-content::-webkit-scrollbar { display: none; }
+
+  /* Sklep top nav */
+  .sklep-top { background: white; flex-shrink: 0; }
+  .sklep-tabs { display: flex; border-bottom: 1px solid #eee; }
+  .sklep-tab { flex: 1; text-align: center; padding: 12px 4px; font-size: 13px; font-weight: 500; color: #666; border-bottom: 2px solid transparent; cursor: pointer; }
+  .sklep-tab.active { color: #F16E00; border-bottom-color: #F16E00; font-weight: 700; }
+  .sklep-customer { display: flex; gap: 8px; padding: 12px 16px; }
+  .customer-btn { padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid #ddd; background: white; color: #444; }
+  .customer-btn.active { background: #000; color: white; border-color: #000; }
+
+  /* Sklep sections */
+  .sklep-section { padding: 20px 16px 0; }
+  .sklep-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .sklep-section-title { font-size: 18px; font-weight: 700; color: #232323; }
+  .sklep-see-more { font-size: 13px; color: #F16E00; font-weight: 600; cursor: pointer; }
+
+  /* Category icons */
+  .cat-scroll { display: flex; gap: 16px; overflow-x: auto; padding: 0 16px 4px; -webkit-overflow-scrolling: touch; }
+  .cat-scroll::-webkit-scrollbar { display: none; }
+  .cat-item { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; cursor: pointer; }
+  .cat-icon { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; }
+  .cat-label { font-size: 12px; color: #232323; font-weight: 500; text-align: center; }
+
+  /* Promo banners */
+  .promo-banners { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 4px; -webkit-overflow-scrolling: touch; }
+  .promo-banners::-webkit-scrollbar { display: none; }
+  .promo-banner { flex-shrink: 0; width: 260px; border-radius: 12px; overflow: hidden; position: relative; height: 148px; cursor: pointer; }
+  .promo-banner-inner { position: absolute; inset: 0; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .promo-badge-sm { background: #F16E00; color: white; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; width: fit-content; margin-bottom: 6px; }
+  .promo-banner-title { font-size: 15px; font-weight: 700; color: white; line-height: 20px; }
+  .promo-banner-sub { font-size: 12px; color: rgba(255,255,255,0.8); margin-top: 3px; }
+  .promo-banner-img { position: absolute; right: 0; top: 0; bottom: 0; width: 110px; object-fit: contain; }
+  .dots-row { display: flex; gap: 5px; justify-content: center; padding: 8px 0 4px; }
+  .dot-sm { width: 6px; height: 6px; border-radius: 50%; background: #ccc; }
+  .dot-sm.active { background: #F16E00; }
+
+  /* Product cards */
+  .products-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 0 16px 4px; -webkit-overflow-scrolling: touch; }
+  .products-scroll::-webkit-scrollbar { display: none; }
+  .product-card { flex-shrink: 0; width: 160px; background: white; border-radius: 12px; overflow: hidden; cursor: pointer; }
+  .product-img { height: 140px; display: flex; align-items: center; justify-content: center; font-size: 60px; position: relative; }
+  .discount-badge { position: absolute; top: 8px; left: 8px; background: #F16E00; color: white; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+  .product-info { padding: 10px 12px 12px; }
+  .product-name { font-size: 13px; font-weight: 600; color: #232323; line-height: 17px; margin-bottom: 6px; }
+  .product-price-new { font-size: 15px; font-weight: 700; color: #232323; }
+  .product-price-old { font-size: 12px; color: #999; text-decoration: line-through; margin-left: 4px; }
+  .product-installment { font-size: 11px; color: #666; margin-top: 2px; }
+  .product-promo-label { font-size: 11px; color: #e8000a; margin-top: 3px; }
+
+  /* Apple zone tabs */
+  .zone-tabs { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 14px; }
+  .zone-tab { padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid #ddd; background: white; color: #444; }
+  .zone-tab.active { background: #000; color: white; border-color: #000; }
+
+  /* Plan cards */
+  .plans-row { display: flex; gap: 10px; padding: 0 16px; }
+  .plan-card-sm { flex: 1; background: white; border-radius: 12px; padding: 14px; border: 1.5px solid #eee; }
+  .plan-name { font-size: 16px; font-weight: 700; color: #232323; margin-bottom: 4px; }
+  .plan-promo { font-size: 13px; color: #F16E00; font-weight: 600; margin-bottom: 4px; }
+  .plan-desc { font-size: 11px; color: #666; }
+
+  /* AI chips in sklep */
+  .sklep-chips { display: flex; flex-direction: column; gap: 8px; padding: 0 16px; }
+  .sklep-chip { background: white; border-radius: 12px; padding: 13px 16px; font-size: 14px; color: #333; cursor: pointer; border: 1px solid #eee; font-weight: 500; }
+  .sklep-chip:active { background: #f5f5f5; }
+
   /* ========== BOTTOM SHEET ========== */
   .sheet-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); z-index: 30; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
   .sheet-backdrop.visible { opacity: 1; pointer-events: all; }
@@ -254,14 +325,189 @@
     <div style="height:88px;"></div>
   </div>
 
+  <!-- ========== SKLEP SCREEN ========== -->
+  <div class="screen" id="screenSklep">
+    <div class="sklep-top">
+      <div class="sklep-tabs">
+        <div class="sklep-tab active">Sklep Orange</div>
+        <div class="sklep-tab">Marketplace</div>
+        <div class="sklep-tab">Ubezpieczenia</div>
+      </div>
+      <div class="sklep-customer">
+        <button class="customer-btn active">Klient indywidualny</button>
+        <button class="customer-btn">Klient biznesowy</button>
+      </div>
+    </div>
+    <div class="screen-content">
+
+      <!-- Produkty -->
+      <div style="padding: 20px 0 0;">
+        <div class="sklep-section-header" style="padding: 0 16px;"><span class="sklep-section-title">Produkty</span></div>
+        <div class="cat-scroll" style="margin-top:12px;">
+          <div class="cat-item"><div class="cat-icon" style="background:linear-gradient(135deg,#e8f4ff,#c2e0ff);">📱</div><span class="cat-label">Telefony</span></div>
+          <div class="cat-item"><div class="cat-icon" style="background:linear-gradient(135deg,#fff0e0,#ffd4a0);">🎧</div><span class="cat-label">Słuchawki</span></div>
+          <div class="cat-item"><div class="cat-icon" style="background:linear-gradient(135deg,#e8ffe8,#b0f0b0);">💻</div><span class="cat-label">Laptopy</span></div>
+          <div class="cat-item"><div class="cat-icon" style="background:linear-gradient(135deg,#f0e8ff,#d4b0ff);">⌚</div><span class="cat-label">Smartwatche</span></div>
+          <div class="cat-item"><div class="cat-icon" style="background:linear-gradient(135deg,#ffe8f0,#ffb0cc);">📷</div><span class="cat-label">Foto</span></div>
+          <div class="cat-item"><div class="cat-icon" style="background:linear-gradient(135deg,#e8fff8,#a0ffd4);">🎮</div><span class="cat-label">Gaming</span></div>
+        </div>
+      </div>
+
+      <!-- Usługi -->
+      <div style="padding: 20px 0 0;">
+        <div class="sklep-section-header" style="padding: 0 16px;"><span class="sklep-section-title">Usługi</span></div>
+        <div class="promo-banners" style="margin-top:12px;">
+          <div class="promo-banner" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">
+            <div class="promo-banner-inner">
+              <div class="promo-badge-sm">Tak O!</div>
+              <div class="promo-banner-title">Nie płać za smartfon przez rok</div>
+              <div class="promo-banner-sub">Zamień z Planem L, 2 internet 5G bez limitów</div>
+            </div>
+            <div style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:52px;">📱</div>
+          </div>
+          <div class="promo-banner" style="background:linear-gradient(135deg,#0d3b2e,#145a3c);">
+            <div class="promo-banner-inner">
+              <div class="promo-badge-sm">Światłowód</div>
+              <div class="promo-banner-title">Orange S i 206 kanaÅ‚ów TV</div>
+              <div class="promo-banner-sub">Przez 12 miesięcy</div>
+            </div>
+            <div style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:52px;">🌐</div>
+          </div>
+        </div>
+        <div class="dots-row"><div class="dot-sm active"></div><div class="dot-sm"></div></div>
+      </div>
+
+      <!-- Bestsellery -->
+      <div style="padding: 20px 0 0;">
+        <div class="sklep-section-header" style="padding: 0 16px;">
+          <span class="sklep-section-title">Bestsellery</span>
+          <span class="sklep-see-more">Zobacz więcej</span>
+        </div>
+        <div class="products-scroll" style="margin-top:12px;">
+          <div class="product-card">
+            <div class="product-img" style="background:linear-gradient(135deg,#f0f4ff,#dce8ff);">
+              <div class="discount-badge">-20%</div>📱
+            </div>
+            <div class="product-info">
+              <div class="product-name">Samsung Galaxy A51</div>
+              <div><span class="product-price-new">599,00 zł</span><span class="product-price-old">999,50 zł</span></div>
+              <div class="product-installment">64,00 zł × 36 rat</div>
+              <div class="product-promo-label">Najtańsza cena z 30 dni: 1950,00 zł</div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:linear-gradient(135deg,#fff0f0,#ffd4d4);">
+              <div class="discount-badge">-20%</div>📱
+            </div>
+            <div class="product-info">
+              <div class="product-name">Xiaomi Redmi Note 13</div>
+              <div><span class="product-price-new">1944,00 zł</span><span class="product-price-old">2099,00 zł</span></div>
+              <div class="product-installment">64,33 zł × 36 rat</div>
+              <div class="product-promo-label">Najtańsza cena z 30 dni: 1659,00 zł</div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:linear-gradient(135deg,#f5f5f5,#e8e8e8);">
+              <div class="discount-badge">-15%</div>📱
+            </div>
+            <div class="product-info">
+              <div class="product-name">iPhone 15 128 GB</div>
+              <div><span class="product-price-new">3299,00 zł</span><span class="product-price-old">3899,00 zł</span></div>
+              <div class="product-installment">91,64 zł × 36 rat</div>
+              <div class="product-promo-label">Najtańsza cena z 30 dni: 3299,00 zł</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Strefa Apple -->
+      <div style="padding: 20px 0 0;">
+        <div class="sklep-section-header" style="padding: 0 16px;">
+          <span class="sklep-section-title">Strefa Apple</span>
+          <span class="sklep-see-more">Poznaj inne modele</span>
+        </div>
+        <div class="zone-tabs" style="margin-top:12px;">
+          <button class="zone-tab active">Telefony</button>
+          <button class="zone-tab">Słuchawki</button>
+          <button class="zone-tab">Akcesoria</button>
+        </div>
+        <div class="products-scroll">
+          <div class="product-card">
+            <div class="product-img" style="background:linear-gradient(135deg,#1a1a1a,#333);">
+              <div class="discount-badge">-20%</div><span style="font-size:60px;">📱</span>
+            </div>
+            <div class="product-info">
+              <div class="product-name">iPhone 13 PRO 512 GB</div>
+              <div><span class="product-price-new">1944,00 zł</span></div>
+              <div class="product-installment">64,20 zł × 36 rat</div>
+              <div class="product-promo-label">Zamień z planem M, -20% przez rok</div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:linear-gradient(135deg,#e8f0ff,#c4d8ff);">
+              <div class="discount-badge">-20%</div><span style="font-size:60px;">📱</span>
+            </div>
+            <div class="product-info">
+              <div class="product-name">iPhone 15 Pro 256 GB</div>
+              <div><span class="product-price-new">1946,00 zł</span></div>
+              <div class="product-installment">64,00 zł × 36 rat</div>
+              <div class="product-promo-label">Zamień z planem M, -20% przez rok</div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:linear-gradient(135deg,#f0f8e8,#d4f0b0);">
+              <div class="discount-badge">-10%</div><span style="font-size:60px;">📱</span>
+            </div>
+            <div class="product-info">
+              <div class="product-name">iPhone 16 128 GB</div>
+              <div><span class="product-price-new">3499,00 zł</span></div>
+              <div class="product-installment">97,19 zł × 36 rat</div>
+              <div class="product-promo-label">Najnowszy model 2024</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kup nowy abonament -->
+      <div class="sklep-section" style="padding-bottom: 20px;">
+        <div class="sklep-section-header">
+          <span class="sklep-section-title">Kup nowy abonament</span>
+        </div>
+        <div style="font-size:13px;color:#666;margin-bottom:14px;">w abonamencie</div>
+        <div class="plans-row" style="margin-bottom:16px;">
+          <div class="plan-card-sm" style="border-color:#F16E00;">
+            <div style="font-size:11px;color:#F16E00;font-weight:700;margin-bottom:4px;">Tylko do 27.02</div>
+            <div class="plan-name">Plan M</div>
+            <div class="plan-promo">4 mies. za 0 zł</div>
+            <div class="plan-desc">potem 99 zł/mies.</div>
+          </div>
+          <div class="plan-card-sm">
+            <div style="font-size:11px;color:#999;font-weight:700;margin-bottom:4px;">bez limitu GB</div>
+            <div class="plan-name">Plan L</div>
+            <div class="plan-promo">6 mies. za 0 zł</div>
+            <div class="plan-desc">potem 129 zł/mies.</div>
+          </div>
+        </div>
+        <div class="sklep-chips">
+          <div class="sklep-chip" onclick="openSklepChat(this)">Chcę przejść na nowy plan</div>
+          <div class="sklep-chip" onclick="openSklepChat(this)">Którym abonament jest dla dziecka?</div>
+          <div class="sklep-chip" onclick="openSklepChat(this)">Który iPhone ma najlepszą baterię?</div>
+          <div class="sklep-chip" onclick="openSklepChat(this)">Jaki najnowszy model iPhone'u?</div>
+          <div class="sklep-chip" onclick="openSklepChat(this)">Jakie modele iPhone są w promocji?</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Bottom bar -->
   <div class="bottom-bar">
     <div class="tab-row">
-      <button class="tab"><svg width="18" height="18" viewBox="0 0 24 24" fill="#F16E00"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span class="tab-label active">Start</span></button>
-      <button class="tab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span class="tab-label">Dla Ciebie</span></button>
-      <button class="tab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg><span class="tab-label">Zarządzaj</span></button>
-      <button class="tab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="tab-label">Sklep</span></button>
-      <button class="tab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span class="tab-label">Ustawienia</span></button>
+      <button class="tab" id="tab-start" onclick="showNav('start')"><svg width="18" height="18" viewBox="0 0 24 24" fill="#F16E00"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span class="tab-label active" id="tabl-start">Start</span></button>
+      <button class="tab" id="tab-dlaciebie" onclick="showNav('dlaciebie')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5" id="tabi-dlaciebie"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span class="tab-label" id="tabl-dlaciebie">Dla Ciebie</span></button>
+      <button class="tab" id="tab-zarzadzaj" onclick="showNav('zarzadzaj')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5" id="tabi-zarzadzaj"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg><span class="tab-label" id="tabl-zarzadzaj">Zarządzaj</span></button>
+      <button class="tab" id="tab-sklep" onclick="showNav('sklep')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5" id="tabi-sklep"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="tab-label" id="tabl-sklep">Sklep</span></button>
+      <button class="tab" id="tab-ustawienia" onclick="showNav('ustawienia')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5" id="tabi-ustawienia"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span class="tab-label" id="tabl-ustawienia">Ustawienia</span></button>
     </div>
     <div class="home-indicator"></div>
   </div>
@@ -321,6 +567,39 @@
 </div>
 
 <script>
+function showNav(screen) {
+  const tabs = ['start', 'dlaciebie', 'zarzadzaj', 'sklep', 'ustawienia'];
+  const icons = { start: '#F16E00', dlaciebie: 'none', zarzadzaj: 'none', sklep: 'none', ustawienia: 'none' };
+  tabs.forEach(t => {
+    document.getElementById('tabl-' + t).classList.remove('active');
+    const icon = document.getElementById('tabi-' + t);
+    if (icon) icon.setAttribute('stroke', '#000');
+  });
+  document.getElementById('tabl-' + screen).classList.add('active');
+
+  document.getElementById('screenSklep').classList.remove('active');
+  const startContent = document.querySelector('.content');
+  if (screen === 'sklep') {
+    startContent.style.display = 'none';
+    document.getElementById('screenSklep').classList.add('active');
+    const icon = document.getElementById('tabi-sklep');
+    if (icon) icon.setAttribute('stroke', '#F16E00');
+    icon.setAttribute('fill', 'none');
+  } else {
+    startContent.style.display = 'block';
+    if (screen === 'start') {
+      const icon = document.getElementById('tabi-start');
+      if (icon) icon.setAttribute('fill', '#F16E00');
+    }
+  }
+}
+
+function openSklepChat(el) {
+  document.getElementById('chatInput').value = el.textContent.trim();
+  openSheet();
+  sendMessage();
+}
+
 const FIXED_CHIPS = [
   'Sprawdź moje płatności',
   'Potrzebuję kolejnego numeru',
