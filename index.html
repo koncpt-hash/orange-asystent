@@ -255,6 +255,10 @@
   .clarify-check-item:last-of-type { border-bottom: none; }
   .clarify-checkbox { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #ddd; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; }
   .clarify-check-item.checked .clarify-checkbox { background: #FF7900; border-color: #FF7900; }
+  .clarify-radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ddd; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s; }
+  .clarify-check-item.checked .clarify-radio { border-color: #FF7900; }
+  .clarify-radio-dot { width: 10px; height: 10px; border-radius: 50%; background: #FF7900; display: none; }
+  .clarify-check-item.checked .clarify-radio-dot { display: block; }
   .clarify-check-label { font-size: 16px; color: #333; font-weight: 500; }
 
   .bubble { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 14px; line-height: 20px; }
@@ -1188,6 +1192,7 @@ const CLARIFYING_FLOWS = {
     },
     {
       q: 'Potrzebujesz też telefonu?',
+      type: 'radio',
       chips: ['Tak, z telefonem', 'Nie, sam numer', 'Jeszcze nie wiem'],
       phrases: {
         'Tak, z telefonem':   'chcę też nowy telefon',
@@ -1261,33 +1266,53 @@ function showNextClarifyStep() {
   checklist.className = 'clarify-checklist';
   activeFlow.currentChecklistEl = checklist;
 
+  const isRadio = step.type === 'radio';
+
   step.chips.forEach(label => {
     const item = document.createElement('div');
     item.className = 'clarify-check-item';
-
-    const box = document.createElement('div');
-    box.className = 'clarify-checkbox';
 
     const lbl = document.createElement('span');
     lbl.className = 'clarify-check-label';
     lbl.textContent = label;
 
-    item.appendChild(box);
-    item.appendChild(lbl);
-    checklist.appendChild(item);
+    if (isRadio) {
+      const radio = document.createElement('div');
+      radio.className = 'clarify-radio';
+      const dot = document.createElement('div');
+      dot.className = 'clarify-radio-dot';
+      radio.appendChild(dot);
+      item.appendChild(radio);
+      item.appendChild(lbl);
 
-    item.addEventListener('click', () => {
-      if (checked.has(label)) {
-        checked.delete(label);
-        item.classList.remove('checked');
-        box.innerHTML = '';
-      } else {
-        checked.add(label);
+      item.addEventListener('click', () => {
+        checklist.querySelectorAll('.clarify-check-item').forEach(i => i.classList.remove('checked'));
+        checked.clear();
         item.classList.add('checked');
-        box.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-      }
-      document.getElementById('chatInput').value = buildInputFromChecked(step, checked);
-    });
+        checked.add(label);
+        document.getElementById('chatInput').value = buildInputFromChecked(step, checked);
+      });
+    } else {
+      const box = document.createElement('div');
+      box.className = 'clarify-checkbox';
+      item.appendChild(box);
+      item.appendChild(lbl);
+
+      item.addEventListener('click', () => {
+        if (checked.has(label)) {
+          checked.delete(label);
+          item.classList.remove('checked');
+          box.innerHTML = '';
+        } else {
+          checked.add(label);
+          item.classList.add('checked');
+          box.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        }
+        document.getElementById('chatInput').value = buildInputFromChecked(step, checked);
+      });
+    }
+
+    checklist.appendChild(item);
   });
 
   panel.appendChild(checklist);
