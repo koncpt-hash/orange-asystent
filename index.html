@@ -105,12 +105,13 @@
   .screen-content::-webkit-scrollbar { display: none; }
 
   /* Sklep top nav */
-  .sklep-top { background: white; flex-shrink: 0; }
-  .sklep-tabs { display: flex; border-bottom: 1px solid #eee; }
-  .sklep-tab { flex: 1; text-align: center; padding: 12px 4px; font-size: 13px; font-weight: 500; color: #666; border-bottom: 2px solid transparent; cursor: pointer; }
+  .sklep-top { background: white; flex-shrink: 0; border-bottom: 1px solid #f0f0f0; }
+  .sklep-topbar { display: flex; align-items: center; gap: 8px; padding: 8px 16px; }
+  .sklep-nav { display: flex; }
+  .sklep-tab { flex: 1; text-align: center; padding: 11px 4px 10px; font-size: 14px; color: #888; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; }
   .sklep-tab.active { color: #F16E00; border-bottom-color: #F16E00; font-weight: 700; }
-  .sklep-customer { display: flex; gap: 8px; padding: 12px 16px; }
-  .customer-btn { padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid #ddd; background: white; color: #444; }
+  .sklep-customer { display: flex; gap: 8px; padding: 10px 16px 12px; background: white; }
+  .customer-btn { padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid #ddd; background: white; color: #444; }
   .customer-btn.active { background: #000; color: white; border-color: #000; }
 
   /* Sklep sections */
@@ -120,54 +121,75 @@
   .sklep-see-more { font-size: 13px; color: #F16E00; font-weight: 600; cursor: pointer; }
 
   /* Category icons */
-  .cat-scroll { display: flex; gap: 16px; overflow-x: auto; padding: 0 16px 4px; -webkit-overflow-scrolling: touch; }
+  .cat-scroll { display: flex; gap: 12px; overflow-x: auto; padding: 0 16px 4px; -webkit-overflow-scrolling: touch; }
   .cat-scroll::-webkit-scrollbar { display: none; }
-  .cat-item { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; cursor: pointer; }
-  .cat-icon { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; }
-  .cat-label { font-size: 12px; color: #232323; font-weight: 500; text-align: center; }
+  .cat-item { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; cursor: pointer; width: 72px; }
+  .cat-icon { width: 72px; height: 72px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 36px; background: #f5f5f5; overflow: hidden; }
+  .cat-label { font-size: 12px; color: #232323; font-weight: 400; text-align: center; line-height: 16px; }
 
-  /* Promo banners */
+  /* Promo banners (Usługi) */
   .promo-banners { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 4px; -webkit-overflow-scrolling: touch; }
   .promo-banners::-webkit-scrollbar { display: none; }
-  .promo-banner { flex-shrink: 0; width: 260px; border-radius: 12px; overflow: hidden; position: relative; height: 148px; cursor: pointer; }
-  .promo-banner-inner { position: absolute; inset: 0; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; }
-  .promo-badge-sm { background: #F16E00; color: white; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; width: fit-content; margin-bottom: 6px; }
-  .promo-banner-title { font-size: 15px; font-weight: 700; color: white; line-height: 20px; }
-  .promo-banner-sub { font-size: 12px; color: rgba(255,255,255,0.8); margin-top: 3px; }
-  .promo-banner-img { position: absolute; right: 0; top: 0; bottom: 0; width: 110px; object-fit: contain; }
-  .dots-row { display: flex; gap: 5px; justify-content: center; padding: 8px 0 4px; }
-  .dot-sm { width: 6px; height: 6px; border-radius: 50%; background: #ccc; }
+  .promo-banner { flex-shrink: 0; width: 270px; border-radius: 8px; overflow: hidden; position: relative; height: 190px; cursor: pointer; }
+  .promo-banner-content { position: absolute; inset: 0; padding: 14px 100px 14px 14px; display: flex; flex-direction: column; justify-content: space-between; }
+  .promo-tag { font-size: 11px; font-weight: 700; color: white; background: #F16E00; padding: 3px 8px; border-radius: 4px; width: fit-content; }
+  .promo-sub { font-size: 11px; color: rgba(255,255,255,0.75); }
+  .promo-main { font-size: 16px; font-weight: 700; color: white; line-height: 22px; }
+  .promo-desc { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+  .promo-phone { position: absolute; right: 0; top: 0; bottom: 0; width: 105px; display: flex; align-items: center; justify-content: center; font-size: 64px; }
+  .dots-row { display: flex; gap: 6px; justify-content: center; padding: 10px 0 2px; }
+  .dot-sm { width: 20px; height: 3px; border-radius: 3px; background: #ddd; }
   .dot-sm.active { background: #F16E00; }
 
   /* Product cards */
-  .products-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 0 16px 4px; -webkit-overflow-scrolling: touch; }
+  .products-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 4px; -webkit-overflow-scrolling: touch; }
   .products-scroll::-webkit-scrollbar { display: none; }
-  .product-card { flex-shrink: 0; width: 160px; background: white; border-radius: 12px; overflow: hidden; cursor: pointer; }
-  .product-img { height: 140px; display: flex; align-items: center; justify-content: center; font-size: 60px; position: relative; }
-  .discount-badge { position: absolute; top: 8px; left: 8px; background: #F16E00; color: white; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
-  .product-info { padding: 10px 12px 12px; }
-  .product-name { font-size: 13px; font-weight: 600; color: #232323; line-height: 17px; margin-bottom: 6px; }
-  .product-price-new { font-size: 15px; font-weight: 700; color: #232323; }
-  .product-price-old { font-size: 12px; color: #999; text-decoration: line-through; margin-left: 4px; }
-  .product-installment { font-size: 11px; color: #666; margin-top: 2px; }
-  .product-promo-label { font-size: 11px; color: #e8000a; margin-top: 3px; }
+  .product-card { flex-shrink: 0; width: 168px; background: white; border-radius: 8px; overflow: hidden; cursor: pointer; }
+  .product-img { height: 150px; display: flex; align-items: center; justify-content: center; font-size: 64px; position: relative; }
+  .discount-badge { position: absolute; bottom: 8px; left: 8px; background: #F16E00; color: white; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 3px; }
+  .product-info { padding: 10px 10px 12px; }
+  .product-name { font-size: 13px; font-weight: 600; color: #232323; line-height: 18px; margin-bottom: 5px; }
+  .product-price-row { display: flex; align-items: baseline; gap: 4px; flex-wrap: wrap; }
+  .product-price-new { font-size: 14px; font-weight: 700; color: #F16E00; }
+  .product-price-old { font-size: 12px; color: #999; text-decoration: line-through; }
+  .product-installment { font-size: 11px; color: #555; margin-top: 3px; }
+  .product-note { font-size: 10px; color: #999; margin-top: 3px; line-height: 14px; }
 
   /* Apple zone tabs */
-  .zone-tabs { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 14px; }
-  .zone-tab { padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid #ddd; background: white; color: #444; }
+  .zone-tabs { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 12px; }
+  .zone-tab { padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid #ddd; background: white; color: #444; }
   .zone-tab.active { background: #000; color: white; border-color: #000; }
 
-  /* Plan cards */
-  .plans-row { display: flex; gap: 10px; padding: 0 16px; }
-  .plan-card-sm { flex: 1; background: white; border-radius: 12px; padding: 14px; border: 1.5px solid #eee; }
-  .plan-name { font-size: 16px; font-weight: 700; color: #232323; margin-bottom: 4px; }
-  .plan-promo { font-size: 13px; color: #F16E00; font-weight: 600; margin-bottom: 4px; }
-  .plan-desc { font-size: 11px; color: #666; }
-
   /* AI chips in sklep */
+  .sklep-ai-chips { padding: 16px 16px 0; display: flex; flex-direction: column; gap: 8px; }
+  .sklep-ai-chip { background: white; border: 1.5px solid #e0d0f0; border-radius: 24px; padding: 12px 16px; font-size: 14px; color: #232323; cursor: pointer; font-weight: 400; }
+  .sklep-ai-chip:active { background: #f9f5ff; }
+
+  /* Specjalne oferty */
+  .specjalne-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 4px; -webkit-overflow-scrolling: touch; }
+  .specjalne-scroll::-webkit-scrollbar { display: none; }
+  .specjalne-card { flex-shrink: 0; width: 220px; border-radius: 8px; overflow: hidden; position: relative; height: 200px; cursor: pointer; }
+  .specjalne-content { position: absolute; inset: 0; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; }
+  .specjalne-tag { font-size: 11px; font-weight: 700; color: white; }
+  .specjalne-title { font-size: 15px; font-weight: 700; color: white; line-height: 20px; }
+  .specjalne-price { font-size: 14px; font-weight: 700; color: white; }
+  .specjalne-btns { display: flex; gap: 8px; }
+  .specjalne-btn { padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; }
+  .specjalne-btn-more { background: #F16E00; color: white; }
+  .specjalne-btn-buy { background: white; color: #232323; }
+
+  /* Plan cards */
+  .plans-row { display: flex; gap: 10px; padding: 0 16px; margin-bottom: 16px; }
+  .plan-card-sm { flex: 1; background: white; border-radius: 8px; padding: 14px 12px; border: 1.5px solid #eee; }
+  .plan-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-bottom: 8px; }
+  .plan-name { font-size: 18px; font-weight: 700; color: #232323; margin-bottom: 4px; }
+  .plan-promo { font-size: 14px; font-weight: 600; color: #232323; margin-bottom: 2px; }
+  .plan-desc { font-size: 11px; color: #999; }
+
+  /* Chips in kup abonament */
   .sklep-chips { display: flex; flex-direction: column; gap: 8px; padding: 0 16px; }
-  .sklep-chip { background: white; border-radius: 12px; padding: 13px 16px; font-size: 14px; color: #333; cursor: pointer; border: 1px solid #eee; font-weight: 500; }
-  .sklep-chip:active { background: #f5f5f5; }
+  .sklep-chip { background: white; border-radius: 24px; padding: 12px 16px; font-size: 14px; color: #333; cursor: pointer; border: 1.5px solid #e0d0f0; }
+  .sklep-chip:active { background: #f9f5ff; }
 
   /* ========== BOTTOM SHEET ========== */
   .sheet-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); z-index: 30; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
@@ -328,101 +350,136 @@
   <!-- ========== SKLEP SCREEN ========== -->
   <div class="screen" id="screenSklep">
     <div class="sklep-top">
-      <div class="sklep-tabs">
+      <!-- Top bar -->
+      <div class="sklep-topbar">
+        <button class="btn-circle" style="flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#444"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#444" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button>
+        <div class="chat-entry" onclick="openSheet()" style="flex:1;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="flex-shrink:0"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="#a885d8"/></svg>
+          <span class="chat-entry-label">Poznan asystenta AI</span>
+        </div>
+        <button class="btn-circle" style="flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/></svg></button>
+        <button class="btn-circle" style="flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></button>
+      </div>
+      <!-- Section tabs -->
+      <div class="sklep-nav">
         <div class="sklep-tab active">Sklep Orange</div>
         <div class="sklep-tab">Marketplace</div>
         <div class="sklep-tab">Ubezpieczenia</div>
       </div>
+      <!-- Customer type -->
       <div class="sklep-customer">
         <button class="customer-btn active">Klient indywidualny</button>
         <button class="customer-btn">Klient biznesowy</button>
       </div>
     </div>
+
     <div class="screen-content">
 
       <!-- Produkty -->
-      <div style="padding: 20px 0 0;">
-        <div class="sklep-section-header" style="padding: 0 16px;"><span class="sklep-section-title">Produkty</span></div>
-        <div class="cat-scroll" style="margin-top:12px;">
-          <div class="cat-item"><div class="cat-icon" style="background:linear-gradient(135deg,#e8f4ff,#c2e0ff);">📱</div><span class="cat-label">Telefony</span></div>
-          <div class="cat-item"><div class="cat-icon" style="background:linear-gradient(135deg,#fff0e0,#ffd4a0);">🎧</div><span class="cat-label">Słuchawki</span></div>
-          <div class="cat-item"><div class="cat-icon" style="background:linear-gradient(135deg,#e8ffe8,#b0f0b0);">💻</div><span class="cat-label">Laptopy</span></div>
-          <div class="cat-item"><div class="cat-icon" style="background:linear-gradient(135deg,#f0e8ff,#d4b0ff);">⌚</div><span class="cat-label">Smartwatche</span></div>
-          <div class="cat-item"><div class="cat-icon" style="background:linear-gradient(135deg,#ffe8f0,#ffb0cc);">📷</div><span class="cat-label">Foto</span></div>
-          <div class="cat-item"><div class="cat-icon" style="background:linear-gradient(135deg,#e8fff8,#a0ffd4);">🎮</div><span class="cat-label">Gaming</span></div>
+      <div style="padding:20px 0 0;">
+        <div class="sklep-section-header" style="padding:0 16px;"><span class="sklep-section-title">Produkty</span></div>
+        <div class="cat-scroll" style="margin-top:12px; padding-left:16px;">
+          <div class="cat-item"><div class="cat-icon" style="background:#f0f0f0;">📱</div><span class="cat-label">Telefony</span></div>
+          <div class="cat-item"><div class="cat-icon" style="background:#f0f0f0;">🎧</div><span class="cat-label">Słuchawki</span></div>
+          <div class="cat-item"><div class="cat-icon" style="background:#f0f0f0;">💻</div><span class="cat-label">Laptopy</span></div>
+          <div class="cat-item"><div class="cat-icon" style="background:#f0f0f0;">⌚</div><span class="cat-label">Smart&shy;watche</span></div>
+          <div class="cat-item"><div class="cat-icon" style="background:#f0f0f0;">📷</div><span class="cat-label">Foto</span></div>
+          <div class="cat-item"><div class="cat-icon" style="background:#f0f0f0;">🎮</div><span class="cat-label">Gaming</span></div>
+          <div style="width:8px;flex-shrink:0;"></div>
         </div>
       </div>
 
       <!-- Usługi -->
-      <div style="padding: 20px 0 0;">
-        <div class="sklep-section-header" style="padding: 0 16px;"><span class="sklep-section-title">Usługi</span></div>
+      <div style="padding:20px 0 0;">
+        <div class="sklep-section-header" style="padding:0 16px;"><span class="sklep-section-title">Usługi</span></div>
         <div class="promo-banners" style="margin-top:12px;">
-          <div class="promo-banner" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">
-            <div class="promo-banner-inner">
-              <div class="promo-badge-sm">Tak O!</div>
-              <div class="promo-banner-title">Nie płać za smartfon przez rok</div>
-              <div class="promo-banner-sub">Zamień z Planem L, 2 internet 5G bez limitów</div>
+          <div class="promo-banner" style="background:#0d1b4a;">
+            <div class="promo-phone">📱</div>
+            <div class="promo-banner-content">
+              <div>
+                <div class="promo-tag">Smartfon z abonamentem 5G</div>
+                <div class="promo-sub" style="margin-top:6px;">12 rat za 0 zł</div>
+              </div>
+              <div>
+                <div style="background:#F16E00;color:white;font-size:13px;font-weight:700;padding:4px 10px;border-radius:4px;width:fit-content;margin-bottom:8px;">Tak O!</div>
+                <div class="promo-main">Nie płać za smartfon przez rok</div>
+                <div class="promo-desc">Zamów z Planem L z internetem 5G bez limitów</div>
+              </div>
             </div>
-            <div style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:52px;">📱</div>
           </div>
-          <div class="promo-banner" style="background:linear-gradient(135deg,#0d3b2e,#145a3c);">
-            <div class="promo-banner-inner">
-              <div class="promo-badge-sm">Światłowód</div>
-              <div class="promo-banner-title">Orange S i 206 kanaÅ‚ów TV</div>
-              <div class="promo-banner-sub">Przez 12 miesięcy</div>
+          <div class="promo-banner" style="background:#1a3a2e;">
+            <div class="promo-phone">🌐</div>
+            <div class="promo-banner-content">
+              <div>
+                <div class="promo-tag" style="background:#2d6a4a;">Światłowód</div>
+              </div>
+              <div>
+                <div class="promo-main">Orange S i 206 kanałów TV</div>
+                <div class="promo-desc">Przez 12 miesięcy</div>
+              </div>
             </div>
-            <div style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:52px;">🌐</div>
           </div>
+          <div style="width:8px;flex-shrink:0;"></div>
         </div>
-        <div class="dots-row"><div class="dot-sm active"></div><div class="dot-sm"></div></div>
+        <div class="dots-row"><div class="dot-sm active"></div><div class="dot-sm"></div><div class="dot-sm"></div></div>
       </div>
 
       <!-- Bestsellery -->
-      <div style="padding: 20px 0 0;">
-        <div class="sklep-section-header" style="padding: 0 16px;">
+      <div style="padding:20px 0 0;">
+        <div class="sklep-section-header" style="padding:0 16px;">
           <span class="sklep-section-title">Bestsellery</span>
           <span class="sklep-see-more">Zobacz więcej</span>
         </div>
         <div class="products-scroll" style="margin-top:12px;">
           <div class="product-card">
-            <div class="product-img" style="background:linear-gradient(135deg,#f0f4ff,#dce8ff);">
-              <div class="discount-badge">-20%</div>📱
+            <div class="product-img" style="background:linear-gradient(160deg,#fff8e0,#ffe4a0);">
+              <div class="discount-badge">-30%</div>📱
             </div>
             <div class="product-info">
               <div class="product-name">Samsung Galaxy A51</div>
-              <div><span class="product-price-new">599,00 zł</span><span class="product-price-old">999,50 zł</span></div>
-              <div class="product-installment">64,00 zł × 36 rat</div>
-              <div class="product-promo-label">Najtańsza cena z 30 dni: 1950,00 zł</div>
+              <div class="product-price-row">
+                <span class="product-price-new">5 599,00 zł</span>
+                <span class="product-price-old">6 999,00 zł</span>
+              </div>
+              <div class="product-installment">54,00 zł x 36 rat</div>
+              <div class="product-note">Najtańsza cena z 30 dni przed obniżką – 1 959,00 zł</div>
             </div>
           </div>
           <div class="product-card">
-            <div class="product-img" style="background:linear-gradient(135deg,#fff0f0,#ffd4d4);">
+            <div class="product-img" style="background:linear-gradient(160deg,#f0eaff,#d4b8ff);">
               <div class="discount-badge">-20%</div>📱
             </div>
             <div class="product-info">
               <div class="product-name">Xiaomi Redmi Note 13</div>
-              <div><span class="product-price-new">1944,00 zł</span><span class="product-price-old">2099,00 zł</span></div>
-              <div class="product-installment">64,33 zł × 36 rat</div>
-              <div class="product-promo-label">Najtańsza cena z 30 dni: 1659,00 zł</div>
+              <div class="product-price-row">
+                <span class="product-price-new">1 944,00 zł</span>
+                <span class="product-price-old">2 299,00 zł</span>
+              </div>
+              <div class="product-installment">54,00 zł x 36 rat</div>
+              <div class="product-note">Najtańsza cena z 30 dni przed obniżką – 1 959,00 zł</div>
             </div>
           </div>
           <div class="product-card">
-            <div class="product-img" style="background:linear-gradient(135deg,#f5f5f5,#e8e8e8);">
+            <div class="product-img" style="background:linear-gradient(160deg,#e8f4ff,#b8d8ff);">
               <div class="discount-badge">-15%</div>📱
             </div>
             <div class="product-info">
-              <div class="product-name">iPhone 15 128 GB</div>
-              <div><span class="product-price-new">3299,00 zł</span><span class="product-price-old">3899,00 zł</span></div>
-              <div class="product-installment">91,64 zł × 36 rat</div>
-              <div class="product-promo-label">Najtańsza cena z 30 dni: 3299,00 zł</div>
+              <div class="product-name">Samsung Galaxy S24 FE</div>
+              <div class="product-price-row">
+                <span class="product-price-new">2 599,00 zł</span>
+                <span class="product-price-old">2 999,00 zł</span>
+              </div>
+              <div class="product-installment">72,19 zł x 36 rat</div>
+              <div class="product-note">Najtańsza cena z 30 dni przed obniżką – 2 599,00 zł</div>
             </div>
           </div>
+          <div style="width:8px;flex-shrink:0;"></div>
         </div>
       </div>
 
       <!-- Strefa Apple -->
-      <div style="padding: 20px 0 0;">
-        <div class="sklep-section-header" style="padding: 0 16px;">
+      <div style="padding:20px 0 0;">
+        <div class="sklep-section-header" style="padding:0 16px;">
           <span class="sklep-section-title">Strefa Apple</span>
           <span class="sklep-see-more">Poznaj inne modele</span>
         </div>
@@ -433,67 +490,106 @@
         </div>
         <div class="products-scroll">
           <div class="product-card">
-            <div class="product-img" style="background:linear-gradient(135deg,#1a1a1a,#333);">
-              <div class="discount-badge">-20%</div><span style="font-size:60px;">📱</span>
+            <div class="product-img" style="background:linear-gradient(160deg,#1c1c2e,#2d2d44);">
+              <div class="discount-badge">-20%</div>
+              <span style="font-size:64px;">📱</span>
             </div>
             <div class="product-info">
               <div class="product-name">iPhone 13 PRO 512 GB</div>
-              <div><span class="product-price-new">1944,00 zł</span></div>
-              <div class="product-installment">64,20 zł × 36 rat</div>
-              <div class="product-promo-label">Zamień z planem M, -20% przez rok</div>
+              <div class="product-price-row"><span class="product-price-new">1 944,00 zł</span></div>
+              <div class="product-installment">54,00 zł x 36 rat</div>
+              <div class="product-note">Najtańsza cena z 30 dni przed obniżką – 1 959,00 zł</div>
             </div>
           </div>
           <div class="product-card">
-            <div class="product-img" style="background:linear-gradient(135deg,#e8f0ff,#c4d8ff);">
-              <div class="discount-badge">-20%</div><span style="font-size:60px;">📱</span>
+            <div class="product-img" style="background:linear-gradient(160deg,#2a1f3d,#3d2d5a);">
+              <div class="discount-badge">-20%</div>
+              <span style="font-size:64px;">📱</span>
             </div>
             <div class="product-info">
-              <div class="product-name">iPhone 15 Pro 256 GB</div>
-              <div><span class="product-price-new">1946,00 zł</span></div>
-              <div class="product-installment">64,00 zł × 36 rat</div>
-              <div class="product-promo-label">Zamień z planem M, -20% przez rok</div>
+              <div class="product-name">Xiaomi Redmi Note 13 Pro</div>
+              <div class="product-price-row"><span class="product-price-new">1 946,00 zł</span></div>
+              <div class="product-installment">54,00 zł x 36 rat</div>
+              <div class="product-note">Najtańsza cena z 30 dni przed obniżką – 1 959,00 zł</div>
             </div>
           </div>
-          <div class="product-card">
-            <div class="product-img" style="background:linear-gradient(135deg,#f0f8e8,#d4f0b0);">
-              <div class="discount-badge">-10%</div><span style="font-size:60px;">📱</span>
-            </div>
-            <div class="product-info">
-              <div class="product-name">iPhone 16 128 GB</div>
-              <div><span class="product-price-new">3499,00 zł</span></div>
-              <div class="product-installment">97,19 zł × 36 rat</div>
-              <div class="product-promo-label">Najnowszy model 2024</div>
+          <div style="width:8px;flex-shrink:0;"></div>
+        </div>
+      </div>
+
+      <!-- AI chips (po Strefie Apple) -->
+      <div class="sklep-ai-chips">
+        <div class="sklep-ai-chip" onclick="openSklepChat(this)">Który iPhone ma najlepszą baterię?</div>
+        <div class="sklep-ai-chip" onclick="openSklepChat(this)">Jaki jest najnowszy dostępny model iPhone'a?</div>
+        <div class="sklep-ai-chip" onclick="openSklepChat(this)">Jakie modele iPhone są w promocji?</div>
+      </div>
+
+      <!-- Specjalne oferty -->
+      <div style="padding:20px 0 0;">
+        <div class="sklep-section-header" style="padding:0 16px;">
+          <span class="sklep-section-title">Specjalne oferty</span>
+          <span class="sklep-see-more">Zobacz więcej</span>
+        </div>
+        <div class="specjalne-scroll" style="margin-top:12px;">
+          <div class="specjalne-card" style="background:linear-gradient(160deg,#1a3a2a,#2d5a40);">
+            <div style="position:absolute;bottom:0;right:0;font-size:80px;opacity:0.4;">🎧</div>
+            <div class="specjalne-content">
+              <div>
+                <div class="specjalne-tag">Redmi Buds 3</div>
+                <div class="specjalne-title" style="margin-top:8px;">Konstrukcja douszna<br>Niezapomniana lekkość i wygoda</div>
+              </div>
+              <div>
+                <div class="specjalne-price" style="margin-bottom:10px;">199 zł</div>
+                <div class="specjalne-btns">
+                  <button class="specjalne-btn specjalne-btn-more">Więcej</button>
+                  <button class="specjalne-btn specjalne-btn-buy">Kup</button>
+                </div>
+              </div>
             </div>
           </div>
+          <div class="specjalne-card" style="background:linear-gradient(160deg,#0d2137,#1a3a5c);">
+            <div style="position:absolute;bottom:0;right:0;font-size:80px;opacity:0.4;">💻</div>
+            <div class="specjalne-content">
+              <div>
+                <div class="specjalne-tag">Huawei MateBook</div>
+                <div class="specjalne-title" style="margin-top:8px;">Ultrabook premium<br>Wydajność i styl w jednym</div>
+              </div>
+              <div>
+                <div class="specjalne-price" style="margin-bottom:10px;">4 999 zł</div>
+                <div class="specjalne-btns">
+                  <button class="specjalne-btn specjalne-btn-more">Więcej</button>
+                  <button class="specjalne-btn specjalne-btn-buy">Kup</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="width:8px;flex-shrink:0;"></div>
         </div>
       </div>
 
       <!-- Kup nowy abonament -->
-      <div class="sklep-section" style="padding-bottom: 20px;">
+      <div class="sklep-section" style="padding-bottom:24px;">
         <div class="sklep-section-header">
           <span class="sklep-section-title">Kup nowy abonament</span>
         </div>
-        <div style="font-size:13px;color:#666;margin-bottom:14px;">w abonamencie</div>
-        <div class="plans-row" style="margin-bottom:16px;">
+        <div style="font-size:13px;color:#888;margin-bottom:14px;">w wybranym planie</div>
+        <div class="plans-row">
           <div class="plan-card-sm" style="border-color:#F16E00;">
-            <div style="font-size:11px;color:#F16E00;font-weight:700;margin-bottom:4px;">Tylko do 27.02</div>
+            <div class="plan-badge" style="background:#fff3e0;color:#F16E00;">Tylko do 27.02</div>
             <div class="plan-name">Plan M</div>
             <div class="plan-promo">4 mies. za 0 zł</div>
-            <div class="plan-desc">potem 99 zł/mies.</div>
           </div>
           <div class="plan-card-sm">
-            <div style="font-size:11px;color:#999;font-weight:700;margin-bottom:4px;">bez limitu GB</div>
+            <div class="plan-badge" style="background:#f0f0f0;color:#666;">bez limitu GB</div>
             <div class="plan-name">Plan L</div>
             <div class="plan-promo">6 mies. za 0 zł</div>
-            <div class="plan-desc">potem 129 zł/mies.</div>
           </div>
         </div>
-        <div class="sklep-chips">
-          <div class="sklep-chip" onclick="openSklepChat(this)">Chcę przejść na nowy plan</div>
-          <div class="sklep-chip" onclick="openSklepChat(this)">Którym abonament jest dla dziecka?</div>
-          <div class="sklep-chip" onclick="openSklepChat(this)">Który iPhone ma najlepszą baterię?</div>
-          <div class="sklep-chip" onclick="openSklepChat(this)">Jaki najnowszy model iPhone'u?</div>
-          <div class="sklep-chip" onclick="openSklepChat(this)">Jakie modele iPhone są w promocji?</div>
+        <div class="sklep-chips" style="margin-top:16px;">
+          <div class="sklep-chip" onclick="openSklepChat(this)">Chcę przenieść numer</div>
+          <div class="sklep-chip" onclick="openSklepChat(this)">Czym różni się Plan S od planu M?</div>
+          <div class="sklep-chip" onclick="openSklepChat(this)">Chcę przetestować usługi za darmo</div>
+          <div class="sklep-chip" onclick="openSklepChat(this)">Jaki abonament dla dziecka?</div>
         </div>
       </div>
 
