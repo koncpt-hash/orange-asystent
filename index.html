@@ -1175,8 +1175,26 @@ function restoreConversation(index) {
 
 const CLARIFYING_FLOWS = {
   'Potrzebuję kolejnego numeru': [
-    { q: 'Co jest dla Ciebie najważniejsze przy wyborze nowego numeru?', chips: ['Niska cena', 'Dużo internetu', 'Telefon w ratach', 'Oferta dla rodziny', 'Bez limitu internetu'] },
-    { q: 'Potrzebujesz też telefonu?',              chips: ['Tak, z telefonem', 'Nie, sam numer', 'Jeszcze nie wiem'] },
+    {
+      q: 'Co jest dla Ciebie najważniejsze przy wyborze nowego numeru?',
+      chips: ['Niska cena', 'Dużo internetu', 'Telefon w ratach', 'Oferta dla rodziny', 'Bez limitu internetu'],
+      phrases: {
+        'Niska cena':            'zależy mi na niskiej cenie',
+        'Dużo internetu':        'chcę dużo internetu',
+        'Telefon w ratach':      'interesuje mnie telefon w ratach',
+        'Oferta dla rodziny':    'szukam oferty dla rodziny',
+        'Bez limitu internetu':  'chcę internet bez limitu',
+      }
+    },
+    {
+      q: 'Potrzebujesz też telefonu?',
+      chips: ['Tak, z telefonem', 'Nie, sam numer', 'Jeszcze nie wiem'],
+      phrases: {
+        'Tak, z telefonem':   'chcę też nowy telefon',
+        'Nie, sam numer':     'potrzebuję tylko nowego numeru',
+        'Jeszcze nie wiem':   'jeszcze nie wiem czy potrzebuję telefonu',
+      }
+    },
   ],
 };
 
@@ -1196,13 +1214,24 @@ function startClarifyingFlow(initialText, steps) {
   switchToChat();
   addBubble('user', initialText);
   messages.push({ role: 'user', content: initialText });
-  activeFlow = { steps, stepIndex: 0 };
+  activeFlow = { steps, stepIndex: 0, currentChecklistEl: null, currentChecked: new Set() };
   showNextClarifyStep();
+}
+
+function buildInputFromChecked(step, checked) {
+  if (checked.size === 0) return '';
+  const phrases = [...checked].map(label => step.phrases?.[label] || label.toLowerCase());
+  const first = phrases[0].charAt(0).toUpperCase() + phrases[0].slice(1);
+  if (phrases.length === 1) return first + '.';
+  return first + '. ' + phrases.slice(1).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('. ') + '.';
 }
 
 function showNextClarifyStep() {
   const step = activeFlow.steps[activeFlow.stepIndex];
   messages.push({ role: 'assistant', content: step.q });
+
+  const checked = new Set();
+  activeFlow.currentChecked = checked;
 
   const msgs = document.getElementById('chatMessages');
   const row = document.createElement('div');
@@ -1219,11 +1248,9 @@ function showNextClarifyStep() {
   bubble.className = 'bubble ai';
   bubble.textContent = step.q;
 
-  // Checklist
   const checklist = document.createElement('div');
   checklist.className = 'clarify-checklist';
-
-  const checked = new Set();
+  activeFlow.currentChecklistEl = checklist;
 
   step.chips.forEach(label => {
     const item = document.createElement('div');
@@ -1231,7 +1258,6 @@ function showNextClarifyStep() {
 
     const box = document.createElement('div');
     box.className = 'clarify-checkbox';
-    box.innerHTML = '';
 
     const lbl = document.createElement('span');
     lbl.className = 'clarify-check-label';
@@ -1251,32 +1277,12 @@ function showNextClarifyStep() {
         item.classList.add('checked');
         box.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       }
-      confirmBtn.classList.toggle('active', checked.size > 0);
+      document.getElementById('chatInput').value = buildInputFromChecked(step, checked);
     });
-  });
-
-  const confirmBtn = document.createElement('button');
-  confirmBtn.className = 'clarify-confirm';
-  confirmBtn.textContent = 'Dalej';
-  confirmBtn.disabled = true;
-
-  confirmBtn.addEventListener('click', () => {
-    if (checked.size === 0) return;
-    // Zablokuj interakcję
-    checklist.querySelectorAll('.clarify-check-item').forEach(i => i.style.pointerEvents = 'none');
-    confirmBtn.disabled = true;
-    confirmBtn.style.opacity = '0.4';
-    handleClarifyAnswer([...checked].join(', '), null);
-  });
-
-  // Aktywuj przycisk tylko gdy coś zaznaczone
-  checklist.addEventListener('click', () => {
-    confirmBtn.disabled = checked.size === 0;
   });
 
   wrap.appendChild(bubble);
   wrap.appendChild(checklist);
-  wrap.appendChild(confirmBtn);
   row.appendChild(avatar);
   row.appendChild(wrap);
   msgs.appendChild(row);
@@ -1399,6 +1405,16 @@ async function sendMessage() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if (!text || isLoading) return;
+
+  // Intercept when clarifying flow is active
+  if (activeFlow) {
+    if (activeFlow.currentChecklistEl) {
+      activeFlow.currentChecklistEl.querySelectorAll('.clarify-check-item').forEach(i => i.style.pointerEvents = 'none');
+    }
+    input.value = '';
+    handleClarifyAnswer(text, null);
+    return;
+  }
 
   switchToChat();
   input.value = '';
