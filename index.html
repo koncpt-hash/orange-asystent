@@ -1104,6 +1104,16 @@ function resetChat() {
   document.getElementById('sheetWelcome').style.display = 'flex';
   buildChips();
   startChipAnimations();
+
+  // Przywróć floating button do prawego dolnego rogu
+  localStorage.removeItem('floatingBtnDeleted');
+  const btn = document.getElementById('floatingBtn');
+  const W = window.innerWidth, H = window.innerHeight;
+  const pos = { top: H - 56 - 88, left: W - 56 - 16 };
+  btn.style.transition = 'opacity 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)';
+  btn.style.top  = pos.top  + 'px';
+  btn.style.left = pos.left + 'px';
+  localStorage.setItem('floatingBtnPos', JSON.stringify(pos));
 }
 
 function showHistory() {
