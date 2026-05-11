@@ -264,6 +264,7 @@
   .bubble { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 14px; line-height: 20px; }
   .bubble.user { background: #eeeeee; color: #232323; border-radius: 12px 2px 12px 12px; padding: 8px 12px; font-weight: 500; font-size: 16px; line-height: 22px; }
   .bubble.ai { background: transparent; color: #333; padding: 0; border-radius: 0; font-size: 16px; line-height: 22px; font-weight: 500; max-width: 100%; width: 100%; }
+  @keyframes wordFade { from { opacity: 0; } to { opacity: 1; } }
 
   .ai-msg { display: flex; flex-direction: column; gap: 6px; width: 100%; }
   .ai-msg-icon { width: 24px; height: 24px; flex-shrink: 0; }
@@ -1390,7 +1391,12 @@ function addBubble(role, text) {
     icon.innerHTML = AI_ICON_SVG;
     const bubble = document.createElement('div');
     bubble.className = 'bubble ai';
-    bubble.textContent = text;
+    text.split(' ').forEach((word, i) => {
+      const span = document.createElement('span');
+      span.textContent = (i > 0 ? ' ' : '') + word;
+      span.style.cssText = `opacity:0;animation:wordFade 0.35s ease forwards;animation-delay:${i * 35}ms`;
+      bubble.appendChild(span);
+    });
     wrap.appendChild(icon);
     wrap.appendChild(bubble);
     msgs.appendChild(wrap);
