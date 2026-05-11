@@ -53,7 +53,8 @@
   .story-label { font-size: 12px; color: #000; text-align: center; line-height: 16px; width: 72px; }
 
   /* Płatności */
-  .payment-section { padding: 16px 16px 0; display: flex; flex-direction: column; gap: 16px; }
+  .payment-section { padding: 16px 16px 0; display: flex; flex-direction: column; gap: 8px; }
+  .payment-section .section-title { margin-bottom: 0; }
   .payment-card { background: white; border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; }
   .payment-card-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
   .payment-card-title { font-size: 16px; font-weight: 700; color: #232323; }
@@ -363,7 +364,7 @@
       </div>
     </div>
 
-    <div class="ai-suggestion-card">
+    <div class="ai-suggestion-card" onclick="openAISuggestionChat()" style="cursor:pointer;">
       <div class="ai-suggestion-header">
         <svg width="16" height="16" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M24 30.8607C27.6922 30.8607 32 35.1685 32 38.8607C32 35.1685 36.3078 30.8607 40 30.8607C36.3078 30.8607 32 26.5528 32 22.8607C32 26.5528 27.6922 30.8607 24 30.8607Z" fill="#FF7900"/>
@@ -1429,6 +1430,28 @@ async function finalizeClarifyingFlow() {
   isLoading = false;
   document.getElementById('sendBtn').disabled = false;
   document.getElementById('chatInput').focus();
+}
+
+function openAISuggestionChat() {
+  openSheet();
+  setTimeout(() => {
+    switchToChat();
+    const userMsg = 'Dlaczego moja faktura jest wyższa niż zazwyczaj?';
+    messages.push({ role: 'user', content: userMsg });
+    addBubble('user', userMsg);
+    addTypingIndicator();
+    setTimeout(() => {
+      removeTypingIndicator();
+      const reply1 = 'Na Twojej ostatniej fakturze pojawiły się dodatkowe opłaty za połączenia telefoniczne i transfer danych z zagranicy. Korzystanie z sieci bez aktywnego pakietu roamingowego wiąże się ze znacznie wyższymi stawkami niż w kraju.';
+      messages.push({ role: 'assistant', content: reply1 });
+      addBubble('ai', reply1);
+      setTimeout(() => {
+        const reply2 = 'Aby uniknąć takich kosztów w przyszłości, polecam aktywację pakietu Roaming Orange — zapewnia on z góry określony limit rozmów i internetu za granicą w znacznie niższej cenie. Chcesz, żebym pomógł Ci go włączyć?';
+        messages.push({ role: 'assistant', content: reply2 });
+        addBubble('ai', reply2);
+      }, 600);
+    }, 1800);
+  }, 500);
 }
 
 function switchToChat() {
