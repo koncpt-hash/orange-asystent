@@ -1123,6 +1123,11 @@ function resetChat() {
   messages = [];
   document.getElementById('chatMessages').innerHTML = '';
   document.getElementById('chatInput').value = '';
+  autoResizeInput();
+  const clarifyPanel = document.getElementById('clarifyPanel');
+  clarifyPanel.classList.remove('active');
+  clarifyPanel.innerHTML = '';
+  activeFlow = null;
   document.getElementById('sheetChat').style.display = 'none';
   document.getElementById('sheetHistory').style.display = 'none';
   document.getElementById('sheetWelcome').style.display = 'flex';
