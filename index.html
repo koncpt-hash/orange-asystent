@@ -285,8 +285,8 @@
 
   /* Input */
   .sheet-input-area { flex-shrink: 0; padding: 8px 16px calc(env(safe-area-inset-bottom, 0px) + 16px); position: relative; z-index: 1; }
-  .sheet-input-inner { display: flex; align-items: center; background: white; border: 2px solid #a885d8; border-radius: 10px; padding: 8px 8px 8px 12px; min-height: 52px; gap: 8px; }
-  .sheet-input { flex: 1; font-size: 15px; color: #333; background: transparent; border: none; outline: none; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+  .sheet-input-inner { display: flex; align-items: flex-end; background: white; border: 2px solid #a885d8; border-radius: 10px; padding: 8px 8px 8px 12px; min-height: 52px; gap: 8px; }
+  .sheet-input { flex: 1; font-size: 15px; color: #333; background: transparent; border: none; outline: none; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; resize: none; overflow: hidden; line-height: 22px; max-height: 44px; padding: 0; }
   .sheet-input::placeholder { color: #aaa; }
   .send-btn { width: 38px; height: 38px; background: #F16E00; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; border: none; transition: opacity 0.15s; }
   .send-btn:disabled { background: #ddd; }
@@ -731,7 +731,7 @@
     <!-- Input (zawsze widoczny) -->
     <div class="sheet-input-area" id="sheetInputArea">
       <div class="sheet-input-inner" id="sheetInputInner">
-        <input class="sheet-input" id="chatInput" placeholder="Zapytaj Asystenta Orange AI" type="text" autocomplete="off"/>
+        <textarea class="sheet-input" id="chatInput" placeholder="Zapytaj Asystenta Orange AI" rows="1" autocomplete="off"></textarea>
         <button class="send-btn" id="sendBtn" onclick="sendMessage()">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -1183,11 +1183,11 @@ const CLARIFYING_FLOWS = {
       q: 'Co jest dla Ciebie najważniejsze przy wyborze nowego numeru?',
       chips: ['Niska cena', 'Dużo internetu', 'Telefon w ratach', 'Oferta dla rodziny', 'Bez limitu internetu'],
       phrases: {
-        'Niska cena':            'zależy mi na niskiej cenie',
-        'Dużo internetu':        'chcę dużo internetu',
-        'Telefon w ratach':      'interesuje mnie telefon w ratach',
-        'Oferta dla rodziny':    'szukam oferty dla rodziny',
-        'Bez limitu internetu':  'chcę internet bez limitu',
+        'Niska cena':            'Szukam taniego abonamentu z nowym numerem.',
+        'Dużo internetu':        'Ważne, żeby w pakiecie było dużo internetu.',
+        'Telefon w ratach':      'Chciałbym dostać nowy telefon w ratach.',
+        'Oferta dla rodziny':    'Szukam oferty dla całej rodziny na kilka numerów.',
+        'Bez limitu internetu':  'Potrzebuję internetu bez żadnych limitów.',
       }
     },
     {
@@ -1225,10 +1225,7 @@ function startClarifyingFlow(initialText, steps) {
 
 function buildInputFromChecked(step, checked) {
   if (checked.size === 0) return '';
-  const phrases = [...checked].map(label => step.phrases?.[label] || label.toLowerCase());
-  const first = phrases[0].charAt(0).toUpperCase() + phrases[0].slice(1);
-  if (phrases.length === 1) return first + '.';
-  return first + '. ' + phrases.slice(1).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('. ') + '.';
+  return [...checked].map(label => step.phrases?.[label] || label).join(' ');
 }
 
 function showNextClarifyStep() {
@@ -1479,8 +1476,16 @@ async function sendMessage() {
   input.focus();
 }
 
+function autoResizeInput() {
+  const el = document.getElementById('chatInput');
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 44) + 'px';
+}
+
+document.getElementById('chatInput').addEventListener('input', autoResizeInput);
+
 document.getElementById('chatInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') sendMessage();
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
 });
 </script>
 </body>
