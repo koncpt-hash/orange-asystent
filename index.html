@@ -303,6 +303,16 @@
   .plan-step-hint { font-size: 14px; font-weight: 400; color: #666; line-height: 20px; letter-spacing: 0.03px; }
   @keyframes stepSlideIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
+  /* Plan timeline — finalized/collapsed state */
+  .plan-finalized { width: 100%; margin-bottom: 2px; }
+  .plan-summary { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 0 4px; -webkit-tap-highlight-color: transparent; user-select: none; }
+  .plan-summary:active { opacity: 0.7; }
+  .plan-summary-dot { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(180deg, #4bb4e6 4%, #a886d8 85%); display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 6px; }
+  .plan-summary-label { font-size: 13px; font-weight: 500; color: #999; flex: 1; }
+  .plan-summary-chevron { flex-shrink: 0; transition: transform 0.38s cubic-bezier(0.4,0,0.2,1); }
+  .plan-finalized-expanded .plan-summary-chevron { transform: rotate(180deg); }
+  .plan-steps-wrap { overflow: hidden; }
+
   /* Input */
   .sheet-input-area { flex-shrink: 0; padding: 8px 16px calc(env(safe-area-inset-bottom, 0px) + 16px); position: relative; z-index: 1; }
   .sheet-input-inner { display: flex; align-items: center; background: white; border: 2px solid #a885d8; border-radius: 10px; padding: 8px 8px 8px 12px; min-height: 52px; gap: 8px; }
@@ -1613,7 +1623,67 @@ function addTypingIndicator(query) {
 function removeTypingIndicator() {
   if (stepAnimInterval) { clearTimeout(stepAnimInterval); stepAnimInterval = null; }
   const el = document.getElementById('typingRow');
-  if (el) el.remove();
+  if (!el) return;
+
+  const steps = el.querySelectorAll('.plan-step');
+  if (steps.length === 0) { el.remove(); return; }
+
+  const stepCount = steps.length;
+  const label = `Wykonano ${stepCount} ${stepCount === 1 ? 'krok' : stepCount < 5 ? 'kroki' : 'kroków'}`;
+
+  // Wrap current steps in collapsible container
+  const stepsWrap = document.createElement('div');
+  stepsWrap.className = 'plan-steps-wrap';
+  stepsWrap.style.overflow = 'hidden';
+  while (el.firstChild) stepsWrap.appendChild(el.firstChild);
+
+  // Build summary header
+  const summary = document.createElement('div');
+  summary.className = 'plan-summary';
+  summary.innerHTML = `
+    <div class="plan-summary-dot">${STEP_CHECK_SVG}</div>
+    <span class="plan-summary-label">${label}</span>
+    <svg class="plan-summary-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M4 6l4 4 4-4" stroke="#bbb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+
+  el.appendChild(summary);
+  el.appendChild(stepsWrap);
+  el.removeAttribute('id');
+  el.className = 'plan-finalized';
+
+  // Animate collapse: measure full height → transition to 0
+  const fullH = stepsWrap.scrollHeight;
+  stepsWrap.style.height = fullH + 'px';
+  stepsWrap.style.opacity = '1';
+  stepsWrap.offsetHeight; // force reflow
+  stepsWrap.style.transition = 'height 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease';
+  stepsWrap.style.height = '0px';
+  stepsWrap.style.opacity = '0';
+
+  // Toggle expand / collapse on click
+  summary.addEventListener('click', () => {
+    const expanded = el.classList.contains('plan-finalized-expanded');
+    if (expanded) {
+      // Collapse
+      stepsWrap.style.transition = 'height 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease';
+      stepsWrap.style.height = stepsWrap.scrollHeight + 'px';
+      stepsWrap.offsetHeight;
+      stepsWrap.style.height = '0px';
+      stepsWrap.style.opacity = '0';
+      el.classList.remove('plan-finalized-expanded');
+    } else {
+      // Expand
+      const targetH = stepsWrap.scrollHeight;
+      stepsWrap.style.transition = 'height 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease';
+      stepsWrap.style.opacity = '1';
+      stepsWrap.style.height = targetH + 'px';
+      stepsWrap.addEventListener('transitionend', () => {
+        stepsWrap.style.height = 'auto';
+      }, { once: true });
+      el.classList.add('plan-finalized-expanded');
+    }
+  });
 }
 
 async function sendMessage() {
