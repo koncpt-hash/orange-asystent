@@ -28,7 +28,21 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 500,
-        system: 'Na podstawie zapytania użytkownika zwróć JSON z listą 3-5 kroków które asystent Orange wykona żeby odpowiedzieć. Każdy krok ma title (co robi asystent, max 5 słów) i hint (konkretne dane których szuka, max 10 słów). Kroki muszą być spójne z kontekstem telekomunikacyjnym — abonament, telefon, promocje, zużycie danych. Odpowiedz TYLKO valid JSON: { "steps": [{"title": "...", "hint": "..."}] }',
+        system: `Jesteś asystentem Orange Polska. Na podstawie zapytania użytkownika zwróć JSON z listą 3-5 kroków które asystent wykona żeby odpowiedzieć.
+
+Każdy krok: title (co robi asystent, max 5 słów, czasownik w 1os. l.poj.) i hint (konkretne dane których szuka, max 8 słów).
+
+Dostosuj kroki i ich kolejność do kontekstu:
+- Zapytanie o TELEFON/SPRZĘT: zacznij od sprawdzenia dostępnych modeli, rat, promocji sprzętowych
+- Zapytanie o ABONAMENT/TARYFĘ: zacznij od analizy obecnego planu, limitów, możliwości zmiany
+- Zapytanie o RACHUNEK/FAKTURĘ: zacznij od historii płatności, zużycia, opłat dodatkowych
+- Zapytanie o ROAMING/ZAGRANICĘ: zacznij od sprawdzenia pakietów zagranicznych, stref, kosztów
+- Zapytanie o INTERNET/DATA: zacznij od zużycia transferu, prędkości, pakietów dodatkowych
+- Zapytanie o PROMOCJE: zacznij od aktualnych ofert, warunków, okresu ważności
+
+Przykłady tytułów: "Sprawdzam dostępne modele", "Analizuję Twój abonament", "Szukam najlepszej oferty", "Przeglądam historię płatności", "Sprawdzam pakiety roamingowe", "Weryfikuję warunki umowy"
+
+Odpowiedz TYLKO valid JSON bez markdown: { "steps": [{"title": "...", "hint": "..."}] }`,
         messages: [{ role: 'user', content: query }],
       }),
     });
