@@ -303,10 +303,12 @@
   @keyframes stepSlideIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
   /* Pulsing icon (simple queries) */
-  .typing-pulse { display: flex; align-items: center; padding: 6px 0; }
-  .typing-pulse-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+  .typing-pulse { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+  .typing-pulse-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   @keyframes iconPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.35;transform:scale(0.75)} }
   .typing-pulse-icon svg { animation: iconPulse 1.4s ease infinite; }
+  .typing-pulse-label { font-size: 14px; color: #999; font-weight: 400; animation: labelFadeIn 0.4s ease forwards; }
+  @keyframes labelFadeIn { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: translateX(0); } }
 
   /* Plan timeline — finalized/collapsed state */
   .plan-finalized { width: 100%; margin-bottom: 2px; }
@@ -1491,6 +1493,20 @@ function switchToChat() {
   document.getElementById('sheetChat').style.display = 'flex';
 }
 
+const PULSE_LABELS = [
+  'Łapię sygnał, jeszcze moment',
+  'Przeszukuję ofertę z prędkością 5G',
+  'Dane w drodze, zaczekaj chwileczkę',
+  'Już działam z pełną mocą sieci',
+  'Nie rozłączaj się, już szukam',
+  'Łączę się z ofertą, sekundka',
+  'Skanuję promocje w trybie turbo',
+  'Pobieram najlepsze opcje, proszę chwilkę',
+  'Szukam na pełnym zasięgu',
+  'Jeszcze moment, ładuję wyniki',
+  'Wysyłam zapytanie do bazy ofert',
+];
+
 const AI_ICON_SVG = `<svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M24 30.8607C27.6922 30.8607 32 35.1685 32 38.8607C32 35.1685 36.3078 30.8607 40 30.8607C36.3078 30.8607 32 26.5528 32 22.8607C32 26.5528 27.6922 30.8607 24 30.8607Z" fill="#FF7900"/>
   <path d="M23.5163 7.10217C26.3971 7.10217 29.7582 10.4632 29.7582 13.344C29.7582 10.4632 33.1192 7.10217 36 7.10217C33.1192 7.10217 29.7582 3.74109 29.7582 0.860352C29.7582 3.74109 26.3971 7.10217 23.5163 7.10217Z" fill="#FF7900"/>
@@ -1590,7 +1606,8 @@ function addTypingIndicator(query) {
     const pulse = document.createElement('div');
     pulse.className = 'typing-pulse';
     pulse.id = 'typingRow';
-    pulse.innerHTML = `<div class="typing-pulse-icon">${AI_ICON_SVG}</div>`;
+    const pulseLabel = PULSE_LABELS[Math.floor(Math.random() * PULSE_LABELS.length)];
+    pulse.innerHTML = `<div class="typing-pulse-icon">${AI_ICON_SVG}</div><span class="typing-pulse-label">${pulseLabel}</span>`;
     msgs.appendChild(pulse);
     msgs.scrollTop = msgs.scrollHeight;
     return Promise.resolve();
