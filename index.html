@@ -289,8 +289,8 @@
   /* Plan timeline (typing indicator) */
   .plan-timeline { display: flex; flex-direction: column; padding: 4px 0 10px; align-self: stretch; }
   .plan-step { display: flex; gap: 8px; align-items: flex-start; opacity: 0; animation: stepSlideIn 0.3s ease forwards; }
-  .plan-step-col { display: flex; flex-direction: column; align-items: center; width: 16px; flex-shrink: 0; }
-  .plan-step-icon { width: 16px; height: 16px; border-radius: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 4px; }
+  .plan-step-col { display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0; }
+  .plan-step-icon { width: 24px; height: 24px; border-radius: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 6px; }
   .plan-step-icon.done { background: linear-gradient(180deg, #4bb4e6 4%, #a886d8 85%); }
   .plan-step-icon.pending { background: #eee; }
   @keyframes pendingPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
@@ -299,8 +299,8 @@
   .plan-step-line { width: 1px; flex: 1; min-height: 14px; background: linear-gradient(180deg, #a886d8 0%, #4bb4e6 100%); opacity: 0.35; }
   .plan-step-content { flex: 1; padding-bottom: 10px; min-width: 0; }
   .plan-step:last-child .plan-step-content { padding-bottom: 2px; }
-  .plan-step-title { font-size: 12px; font-weight: 600; color: #333; line-height: 18px; }
-  .plan-step-hint { font-size: 10px; font-weight: 400; color: #666; line-height: 12px; letter-spacing: 0.03px; }
+  .plan-step-title { font-size: 14px; font-weight: 500; color: #333; line-height: 20px; }
+  .plan-step-hint { font-size: 12px; font-weight: 400; color: #666; line-height: 16px; letter-spacing: 0.03px; }
   @keyframes stepSlideIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
   /* Input */
