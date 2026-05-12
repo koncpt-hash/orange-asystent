@@ -286,21 +286,22 @@
   .ai-msg-icon { width: 24px; height: 24px; flex-shrink: 0; }
   .ai-avatar { display: none; }
 
-  .typing-wrap { display: flex; flex-direction: column; gap: 4px; }
-  .agent-status { display: flex; align-items: center; gap: 5px; }
-  .agent-status-dot { width: 6px; height: 6px; background: #a885d8; border-radius: 50%; flex-shrink: 0; }
-  @keyframes statusPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-  .agent-status-dot { animation: statusPulse 1.4s ease infinite; }
-  .agent-status-text { font-size: 11px; color: #999; }
-
-  .typing-dots { display: flex; gap: 4px; padding: 11px 14px; background: #F5F5F5; border-radius: 18px; border-bottom-left-radius: 4px; width: fit-content; }
-  .typing-dot { width: 6px; height: 6px; background: #bbb; border-radius: 50%; }
-  @keyframes typingBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-4px)} }
-  .typing-dot:nth-child(1) { animation: typingBounce 1.2s ease infinite; }
-  .typing-dot:nth-child(2) { animation: typingBounce 1.2s ease 0.2s infinite; }
-  .typing-dot:nth-child(3) { animation: typingBounce 1.2s ease 0.4s infinite; }
-  .agent-status-hint { font-size: 10px; color: #bbb; padding-left: 11px; display: block; }
-  @keyframes stepFadeIn { from { opacity:0; transform:translateY(3px); } to { opacity:1; transform:translateY(0); } }
+  /* Plan timeline (typing indicator) */
+  .plan-timeline { display: flex; flex-direction: column; width: 100%; }
+  .plan-step { display: flex; gap: 8px; align-items: flex-start; opacity: 0; animation: stepSlideIn 0.3s ease forwards; }
+  .plan-step-col { display: flex; flex-direction: column; align-items: center; width: 16px; flex-shrink: 0; }
+  .plan-step-icon { width: 16px; height: 16px; border-radius: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 4px; }
+  .plan-step-icon.done { background: linear-gradient(180deg, #4bb4e6 4%, #a886d8 85%); }
+  .plan-step-icon.pending { background: #eee; }
+  @keyframes pendingPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .plan-step-icon.pending { animation: pendingPulse 1.4s ease infinite; }
+  .plan-step-icon.done { animation: none; }
+  .plan-step-line { width: 1px; flex: 1; min-height: 14px; background: linear-gradient(180deg, #a886d8 0%, #4bb4e6 100%); opacity: 0.35; }
+  .plan-step-content { flex: 1; padding-bottom: 10px; min-width: 0; }
+  .plan-step:last-child .plan-step-content { padding-bottom: 2px; }
+  .plan-step-title { font-size: 12px; font-weight: 600; color: #333; line-height: 18px; }
+  .plan-step-hint { font-size: 10px; font-weight: 400; color: #666; line-height: 12px; letter-spacing: 0.03px; }
+  @keyframes stepSlideIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
   /* Input */
   .sheet-input-area { flex-shrink: 0; padding: 8px 16px calc(env(safe-area-inset-bottom, 0px) + 16px); position: relative; z-index: 1; }
@@ -1508,85 +1509,113 @@ function addBubble(role, text) {
   msgs.scrollTop = msgs.scrollHeight;
 }
 
+const STEP_CHECK_SVG = `<svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const STEP_DOT_SVG   = `<svg width="8" height="8" viewBox="0 0 8 8" fill="none"><circle cx="4" cy="4" r="2.5" fill="#bbb"/></svg>`;
+
+function makePlanStep(title, hint, isDone, hasLine) {
+  const row = document.createElement('div');
+  row.className = 'plan-step';
+
+  const col = document.createElement('div');
+  col.className = 'plan-step-col';
+
+  const iconEl = document.createElement('div');
+  iconEl.className = 'plan-step-icon ' + (isDone ? 'done' : 'pending');
+  iconEl.innerHTML = isDone ? STEP_CHECK_SVG : STEP_DOT_SVG;
+  col.appendChild(iconEl);
+
+  if (hasLine) {
+    const line = document.createElement('div');
+    line.className = 'plan-step-line';
+    col.appendChild(line);
+  }
+
+  const content = document.createElement('div');
+  content.className = 'plan-step-content';
+
+  const titleEl = document.createElement('p');
+  titleEl.className = 'plan-step-title';
+  titleEl.textContent = title;
+  content.appendChild(titleEl);
+
+  if (hint) {
+    const hintEl = document.createElement('p');
+    hintEl.className = 'plan-step-hint';
+    hintEl.textContent = hint;
+    content.appendChild(hintEl);
+  }
+
+  row.appendChild(col);
+  row.appendChild(content);
+  return row;
+}
+
 function addTypingIndicator(query) {
   const msgs = document.getElementById('chatMessages');
   const wrap = document.createElement('div');
   wrap.className = 'ai-msg';
   wrap.id = 'typingRow';
 
-  const icon = document.createElement('div');
-  icon.className = 'ai-msg-icon';
-  icon.innerHTML = AI_ICON_SVG;
+  const iconEl = document.createElement('div');
+  iconEl.className = 'ai-msg-icon';
+  iconEl.innerHTML = AI_ICON_SVG;
 
-  const inner = document.createElement('div');
-  inner.className = 'typing-wrap';
+  const timeline = document.createElement('div');
+  timeline.className = 'plan-timeline';
+  timeline.appendChild(makePlanStep('Analizuję zapytanie…', '', false, false));
 
-  const status = document.createElement('div');
-  status.className = 'agent-status';
-  const dot = document.createElement('div');
-  dot.className = 'agent-status-dot';
-  const textEl = document.createElement('span');
-  textEl.className = 'agent-status-text';
-  textEl.textContent = 'Analizuję zapytanie…';
-  status.appendChild(dot);
-  status.appendChild(textEl);
-
-  const hintEl = document.createElement('span');
-  hintEl.className = 'agent-status-hint';
-
-  const dots = document.createElement('div');
-  dots.className = 'typing-dots';
-  dots.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-
-  inner.appendChild(status);
-  inner.appendChild(hintEl);
-  inner.appendChild(dots);
-  wrap.appendChild(icon);
-  wrap.appendChild(inner);
+  wrap.appendChild(iconEl);
+  wrap.appendChild(timeline);
   msgs.appendChild(wrap);
   msgs.scrollTop = msgs.scrollHeight;
 
-  function startStepCycle(steps) {
+  function runSteps(steps) {
+    if (!document.getElementById('typingRow')) return;
+    timeline.innerHTML = '';
     let idx = 0;
-    function showStep() {
+
+    function revealStep() {
       if (!document.getElementById('typingRow')) return;
-      const step = steps[idx % steps.length];
-      textEl.style.animation = 'none';
-      void textEl.offsetWidth; // reflow
-      textEl.style.animation = 'stepFadeIn 0.3s ease forwards';
-      textEl.textContent = step.title;
-      hintEl.style.animation = 'none';
-      void hintEl.offsetWidth;
-      hintEl.style.animation = 'stepFadeIn 0.3s ease 0.05s forwards';
-      hintEl.textContent = step.hint;
-      idx++;
+      const isLast = idx === steps.length - 1;
+      const step = steps[idx];
+      const row = makePlanStep(step.title, step.hint, false, !isLast);
+      timeline.appendChild(row);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      if (!isLast) {
+        stepAnimInterval = setTimeout(() => {
+          const icon = row.querySelector('.plan-step-icon');
+          if (icon) { icon.className = 'plan-step-icon done'; icon.innerHTML = STEP_CHECK_SVG; }
+          idx++;
+          revealStep();
+        }, 1600);
+      }
     }
-    showStep();
-    stepAnimInterval = setInterval(showStep, 1800);
+
+    revealStep();
   }
 
-  if (query) {
-    fetch('/api/agent-plan', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query }),
-    })
-    .then(r => r.json())
+  const planPromise = query
+    ? fetch('/api/agent-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      }).then(r => r.json())
+    : Promise.resolve({ steps: DEFAULT_AGENT_STEPS });
+
+  planPromise
     .then(data => {
       if (!document.getElementById('typingRow')) return;
-      startStepCycle(data.steps?.length ? data.steps : DEFAULT_AGENT_STEPS);
+      runSteps(data.steps?.length ? data.steps : DEFAULT_AGENT_STEPS);
     })
     .catch(() => {
       if (!document.getElementById('typingRow')) return;
-      startStepCycle(DEFAULT_AGENT_STEPS);
+      runSteps(DEFAULT_AGENT_STEPS);
     });
-  } else {
-    startStepCycle(DEFAULT_AGENT_STEPS);
-  }
 }
 
 function removeTypingIndicator() {
-  if (stepAnimInterval) { clearInterval(stepAnimInterval); stepAnimInterval = null; }
+  if (stepAnimInterval) { clearTimeout(stepAnimInterval); stepAnimInterval = null; }
   const el = document.getElementById('typingRow');
   if (el) el.remove();
 }
