@@ -302,6 +302,12 @@
   .plan-step-hint { font-size: 14px; font-weight: 400; color: #666; line-height: 20px; letter-spacing: 0.03px; }
   @keyframes stepSlideIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
+  /* Pulsing icon (simple queries) */
+  .typing-pulse { display: flex; align-items: center; padding: 6px 0; }
+  .typing-pulse-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+  @keyframes iconPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.35;transform:scale(0.75)} }
+  .typing-pulse-icon svg { animation: iconPulse 1.4s ease infinite; }
+
   /* Plan timeline — finalized/collapsed state */
   .plan-finalized { width: 100%; margin-bottom: 2px; }
   .plan-summary { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 0 4px; -webkit-tap-highlight-color: transparent; user-select: none; }
@@ -1560,8 +1566,31 @@ function makePlanStep(title, hint, isDone, hasLine) {
   return row;
 }
 
+function isComplexQuery(query) {
+  if (!query) return false;
+  const q = query.toLowerCase();
+  const keywords = [
+    'telefon', 'smartfon', 'smartphone', 'iphone', 'samsung', 'pixel',
+    'huawei', 'xiaomi', 'motorola', 'oppo', 'nothing', 'oneplus',
+    'abonament', 'kontrakt', 'taryfa', 'umowa', 'plan l', 'plan m',
+    'plan xl', 'plan s', 'plan xxl', 'nowy numer', 'drugi numer'
+  ];
+  return keywords.some(k => q.includes(k));
+}
+
 function addTypingIndicator(query) {
   const msgs = document.getElementById('chatMessages');
+
+  if (!isComplexQuery(query)) {
+    // Simple query — show pulsing icon only
+    const pulse = document.createElement('div');
+    pulse.className = 'typing-pulse';
+    pulse.id = 'typingRow';
+    pulse.innerHTML = `<div class="typing-pulse-icon">${AI_ICON_SVG}</div>`;
+    msgs.appendChild(pulse);
+    msgs.scrollTop = msgs.scrollHeight;
+    return Promise.resolve();
+  }
 
   const timeline = document.createElement('div');
   timeline.className = 'plan-timeline';
