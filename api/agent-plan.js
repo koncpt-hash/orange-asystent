@@ -26,7 +26,7 @@ module.exports = async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 500,
         system: `Jesteś asystentem Orange Polska. Na podstawie zapytania użytkownika zwróć JSON z listą 3-5 kroków które asystent wykona żeby odpowiedzieć.
 
@@ -48,7 +48,14 @@ Odpowiedz TYLKO valid JSON bez markdown: { "steps": [{"title": "...", "hint": ".
     });
 
     const data = await response.json();
+
+    if (!response.ok) {
+      console.error('agent-plan API error:', response.status, JSON.stringify(data));
+      throw new Error(`API ${response.status}`);
+    }
+
     const text = data.content?.[0]?.text || '';
+    console.log('agent-plan raw response:', text);
 
     // Strip markdown code fences if present
     const clean = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
