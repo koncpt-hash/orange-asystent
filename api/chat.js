@@ -26,7 +26,12 @@ module.exports = async function handler(req, res) {
     });
 
     const data = await response.json();
-    return res.status(response.status).json(data);
+    if (!response.ok) {
+      const msg = data?.error?.message || `API error ${response.status}`;
+      console.error('Anthropic error:', response.status, msg);
+      return res.status(500).json({ error: msg });
+    }
+    return res.status(200).json(data);
   } catch (err) {
     console.error('API error:', err);
     return res.status(500).json({ error: err.message });

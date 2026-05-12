@@ -1448,14 +1448,17 @@ async function finalizeClarifyingFlow() {
       body: JSON.stringify({ messages, system: SYSTEM_PROMPT }),
     });
     const data = await response.json();
+    if (data.error) throw new Error(data.error);
     await stepsPromise;
     removeTypingIndicator();
     const reply = data.content?.[0]?.text || 'Przepraszam, coś poszło nie tak.';
     messages.push({ role: 'assistant', content: reply });
     addBubble('ai', reply);
   } catch (err) {
+    await stepsPromise.catch(() => {});
     removeTypingIndicator();
     addBubble('ai', 'Przepraszam, wystąpił problem z połączeniem.');
+    console.error(err);
   }
   isLoading = false;
   document.getElementById('sendBtn').disabled = false;
@@ -1746,12 +1749,14 @@ async function sendMessage() {
       body: JSON.stringify({ messages, system: SYSTEM_PROMPT }),
     });
     const data = await response.json();
+    if (data.error) throw new Error(data.error);
     await stepsPromise;
     removeTypingIndicator();
     const reply = data.content?.[0]?.text || 'Przepraszam, coś poszło nie tak.';
     messages.push({ role: 'assistant', content: reply });
     addBubble('ai', reply);
   } catch (err) {
+    await stepsPromise.catch(() => {});
     removeTypingIndicator();
     addBubble('ai', 'Przepraszam, wystąpił problem z połączeniem. Spróbuj ponownie.');
     console.error(err);
