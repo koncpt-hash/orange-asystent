@@ -299,6 +299,8 @@
   .typing-dot:nth-child(1) { animation: typingBounce 1.2s ease infinite; }
   .typing-dot:nth-child(2) { animation: typingBounce 1.2s ease 0.2s infinite; }
   .typing-dot:nth-child(3) { animation: typingBounce 1.2s ease 0.4s infinite; }
+  .agent-status-hint { font-size: 10px; color: #bbb; padding-left: 11px; display: block; }
+  @keyframes stepFadeIn { from { opacity:0; transform:translateY(3px); } to { opacity:1; transform:translateY(0); } }
 
   /* Input */
   .sheet-input-area { flex-shrink: 0; padding: 8px 16px calc(env(safe-area-inset-bottom, 0px) + 16px); position: relative; z-index: 1; }
@@ -969,6 +971,14 @@ ZASADY:
 - Bez markdown, bez gwiazdek — tylko czysty tekst`;
 
 let messages = [];
+let stepAnimInterval = null;
+
+const DEFAULT_AGENT_STEPS = [
+  { title: 'Analizuję Twój abonament', hint: 'Plan, limity, aktywne usługi' },
+  { title: 'Sprawdzam zużycie danych', hint: 'Transfer krajowy i zagraniczny' },
+  { title: 'Przeglądam dostępne oferty', hint: 'Promocje i pakiety dodatkowe' },
+  { title: 'Przygotowuję odpowiedź', hint: 'Najlepsze rozwiązanie dla Ciebie' },
+];
 let isLoading = false;
 
 function openSheet() {
@@ -1409,7 +1419,8 @@ function handleClarifyAnswer(answer, chipsEl) {
 }
 
 async function finalizeClarifyingFlow() {
-  addTypingIndicator();
+  const lastUserMsg = [...messages].reverse().find(m => m.role === 'user')?.content;
+  addTypingIndicator(lastUserMsg);
   isLoading = true;
   document.getElementById('sendBtn').disabled = true;
   try {
@@ -1439,7 +1450,7 @@ function openAISuggestionChat() {
     const userMsg = 'Dlaczego moja faktura jest wyższa niż zazwyczaj?';
     messages.push({ role: 'user', content: userMsg });
     addBubble('user', userMsg);
-    addTypingIndicator();
+    addTypingIndicator(userMsg);
     setTimeout(() => {
       removeTypingIndicator();
       const reply1 = 'Na Twojej ostatniej fakturze pojawiły się dodatkowe opłaty za połączenia telefoniczne i transfer danych z zagranicy. Korzystanie z sieci bez aktywnego pakietu roamingowego wiąże się ze znacznie wyższymi stawkami niż w kraju.';
@@ -1497,31 +1508,85 @@ function addBubble(role, text) {
   msgs.scrollTop = msgs.scrollHeight;
 }
 
-function addTypingIndicator() {
+function addTypingIndicator(query) {
   const msgs = document.getElementById('chatMessages');
   const wrap = document.createElement('div');
   wrap.className = 'ai-msg';
   wrap.id = 'typingRow';
+
   const icon = document.createElement('div');
   icon.className = 'ai-msg-icon';
   icon.innerHTML = AI_ICON_SVG;
+
   const inner = document.createElement('div');
   inner.className = 'typing-wrap';
+
   const status = document.createElement('div');
   status.className = 'agent-status';
-  status.innerHTML = '<div class="agent-status-dot"></div><span class="agent-status-text">Asystent analizuje Twój profil...</span>';
+  const dot = document.createElement('div');
+  dot.className = 'agent-status-dot';
+  const textEl = document.createElement('span');
+  textEl.className = 'agent-status-text';
+  textEl.textContent = 'Analizuję zapytanie…';
+  status.appendChild(dot);
+  status.appendChild(textEl);
+
+  const hintEl = document.createElement('span');
+  hintEl.className = 'agent-status-hint';
+
   const dots = document.createElement('div');
   dots.className = 'typing-dots';
   dots.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+
   inner.appendChild(status);
+  inner.appendChild(hintEl);
   inner.appendChild(dots);
   wrap.appendChild(icon);
   wrap.appendChild(inner);
   msgs.appendChild(wrap);
   msgs.scrollTop = msgs.scrollHeight;
+
+  function startStepCycle(steps) {
+    let idx = 0;
+    function showStep() {
+      if (!document.getElementById('typingRow')) return;
+      const step = steps[idx % steps.length];
+      textEl.style.animation = 'none';
+      void textEl.offsetWidth; // reflow
+      textEl.style.animation = 'stepFadeIn 0.3s ease forwards';
+      textEl.textContent = step.title;
+      hintEl.style.animation = 'none';
+      void hintEl.offsetWidth;
+      hintEl.style.animation = 'stepFadeIn 0.3s ease 0.05s forwards';
+      hintEl.textContent = step.hint;
+      idx++;
+    }
+    showStep();
+    stepAnimInterval = setInterval(showStep, 1800);
+  }
+
+  if (query) {
+    fetch('/api/agent-plan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query }),
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (!document.getElementById('typingRow')) return;
+      startStepCycle(data.steps?.length ? data.steps : DEFAULT_AGENT_STEPS);
+    })
+    .catch(() => {
+      if (!document.getElementById('typingRow')) return;
+      startStepCycle(DEFAULT_AGENT_STEPS);
+    });
+  } else {
+    startStepCycle(DEFAULT_AGENT_STEPS);
+  }
 }
 
 function removeTypingIndicator() {
+  if (stepAnimInterval) { clearInterval(stepAnimInterval); stepAnimInterval = null; }
   const el = document.getElementById('typingRow');
   if (el) el.remove();
 }
@@ -1548,7 +1613,7 @@ async function sendMessage() {
 
   addBubble('user', text);
   messages.push({ role: 'user', content: text });
-  addTypingIndicator();
+  addTypingIndicator(text);
 
   try {
     const response = await fetch('/api/chat', {
