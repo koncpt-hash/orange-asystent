@@ -177,9 +177,10 @@
   .zone-tab.active { background: #000; color: white; border-color: #000; }
 
   /* AI chips in sklep */
-  .sklep-ai-chips { padding: 16px 16px 0; display: flex; flex-direction: column; gap: 8px; }
-  .sklep-ai-chip { background: white; border: 2px solid #e0d0f0; border-radius: 24px; padding: 12px 16px; font-size: 14px; color: #232323; cursor: pointer; font-weight: 400; }
-  .sklep-ai-chip:active { background: #f9f5ff; }
+  .sklep-ai-chips { padding: 16px 16px 0; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .sklep-ai-chip { display: inline-flex; align-items: center; justify-content: center; padding: 8px 13px; border: none; border-radius: 60px; font-size: 14px; font-weight: 500; line-height: 18px; color: #31067F; background: #fff; cursor: pointer; white-space: nowrap; position: relative; -webkit-tap-highlight-color: transparent; transition: opacity 0.18s; }
+  .sklep-ai-chip::before { content: ''; position: absolute; inset: 0; border-radius: 60px; padding: 1px; background: linear-gradient(90deg, #70A1FA, #AE80FF, #F8513E); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+  .sklep-ai-chip:active { opacity: 0.7; }
 
   /* Specjalne oferty */
   .specjalne-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 4px; -webkit-overflow-scrolling: touch; }
@@ -203,9 +204,10 @@
   .plan-desc { font-size: 11px; color: #999; }
 
   /* Chips in kup abonament */
-  .sklep-chips { display: flex; flex-direction: column; gap: 8px; padding: 0 16px; }
-  .sklep-chip { background: white; border-radius: 24px; padding: 12px 16px; font-size: 14px; color: #333; cursor: pointer; border: 2px solid #e0d0f0; }
-  .sklep-chip:active { background: #f9f5ff; }
+  .sklep-chips { display: flex; flex-direction: column; gap: 8px; padding: 0 16px; align-items: flex-start; }
+  .sklep-chip { display: inline-flex; align-items: center; justify-content: center; padding: 8px 13px; border: none; border-radius: 60px; font-size: 14px; font-weight: 500; line-height: 18px; color: #31067F; background: #fff; cursor: pointer; white-space: nowrap; position: relative; -webkit-tap-highlight-color: transparent; transition: opacity 0.18s; }
+  .sklep-chip::before { content: ''; position: absolute; inset: 0; border-radius: 60px; padding: 1px; background: linear-gradient(90deg, #70A1FA, #AE80FF, #F8513E); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+  .sklep-chip:active { opacity: 0.7; }
 
   /* ========== BOTTOM SHEET ========== */
   .sheet-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); z-index: 30; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
