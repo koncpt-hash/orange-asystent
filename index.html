@@ -240,7 +240,7 @@
   .sheet-close:active { background: #f5f5f5; }
 
   /* Welcome */
-  .sheet-welcome { padding: 20px 16px 0; flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; z-index: 1; overflow: hidden; }
+  .sheet-welcome { padding: 20px 16px 0; flex: 1; display: flex; flex-direction: column; align-items: flex-start; text-align: left; position: relative; z-index: 1; overflow: hidden; }
   .ai-sparkle-icon { width: 44px; height: 44px; margin-bottom: 14px; flex-shrink: 0; }
   .sheet-greeting-text { font-size: 28px; font-weight: 700; line-height: 32px; letter-spacing: -0.5px; margin-bottom: 6px; flex-shrink: 0; }
   .sheet-greeting-text span.name { color: #F15E00; }
@@ -823,12 +823,6 @@
 
     <!-- Welcome state -->
     <div class="sheet-welcome" id="sheetWelcome">
-      <svg class="ai-sparkle-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M24 30.8607C27.6922 30.8607 32 35.1685 32 38.8607C32 35.1685 36.3078 30.8607 40 30.8607C36.3078 30.8607 32 26.5528 32 22.8607C32 26.5528 27.6922 30.8607 24 30.8607Z" fill="#FF7900"/>
-        <path d="M23.5163 7.10217C26.3971 7.10217 29.7582 10.4632 29.7582 13.344C29.7582 10.4632 33.1192 7.10217 36 7.10217C33.1192 7.10217 29.7582 3.74109 29.7582 0.860352C29.7582 3.74109 26.3971 7.10217 23.5163 7.10217Z" fill="#FF7900"/>
-        <path d="M33.0334 18.9624C25.4106 18.9624 16.5167 27.8563 16.5167 35.4791C16.5167 27.8563 7.62283 18.9624 0 18.9624C7.62283 18.9624 16.5167 10.0686 16.5167 2.4458C16.5167 10.0686 25.4106 18.9624 33.0334 18.9624Z" fill="#FF7900"/>
-        <rect width="12.4578" height="2.77601" transform="matrix(0.690629 -0.72321 0.723213 0.690625 14.1865 25.5254)" fill="white"/>
-      </svg>
       <div class="sheet-greeting-text">Cześć, <span class="name">Adam!</span></div>
       <div class="sheet-subtitle">Powiedz co chcesz załatwić.</div>
       <div style="height:26px;flex-shrink:0"></div>
