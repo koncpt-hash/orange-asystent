@@ -282,6 +282,22 @@
   .bubble.ai { background: transparent; color: #333; padding: 0; border-radius: 0; font-size: 16px; line-height: 22px; font-weight: 500; max-width: 100%; width: 100%; }
   @keyframes wordFade { from { opacity: 0; } to { opacity: 1; } }
 
+  /* Markdown bubble styles */
+  .bubble.ai .md-block { margin: 0 0 12px; }
+  .bubble.ai .md-block:last-child { margin-bottom: 0; }
+  .bubble.ai .md-highlight { background: #fff3e0; border-left: 3px solid #FF7900; border-radius: 6px; padding: 10px 14px; margin: 0 0 12px; }
+  .bubble.ai .md-highlight .md-label { font-size: 11px; font-weight: 600; color: #FF7900; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+  .bubble.ai .md-highlight .md-value { font-size: 22px; font-weight: 700; color: #232323; line-height: 1.2; }
+  .bubble.ai .md-highlight .md-sub { font-size: 13px; font-weight: 400; color: #888; margin-top: 1px; }
+  .bubble.ai .md-section-title { font-size: 12px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.07em; margin: 0 0 6px; }
+  .bubble.ai .md-text { font-size: 15px; font-weight: 400; color: #333; line-height: 22px; }
+  .bubble.ai .md-text strong { font-weight: 600; color: #232323; }
+
+  /* Follow-up chips */
+  .followup-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .followup-chip { display: inline-flex; align-items: center; gap: 5px; padding: 7px 13px; border: 1.5px solid #e0e0e0; border-radius: 20px; font-size: 13px; font-weight: 500; color: #333; background: #fff; cursor: pointer; transition: border-color 0.18s, background 0.18s; -webkit-tap-highlight-color: transparent; }
+  .followup-chip:active { background: #f5f5f5; border-color: #FF7900; color: #FF7900; }
+
   .ai-msg { display: flex; flex-direction: column; gap: 6px; width: 100%; }
   .ai-msg-icon { width: 24px; height: 24px; flex-shrink: 0; }
   .ai-avatar { display: none; }
@@ -1467,6 +1483,64 @@ async function finalizeClarifyingFlow() {
   document.getElementById('chatInput').focus();
 }
 
+function addStructuredBubble(blocks, followups) {
+  const msgs = document.getElementById('chatMessages');
+  const wrap = document.createElement('div');
+  wrap.className = 'ai-msg';
+  const icon = document.createElement('div');
+  icon.className = 'ai-msg-icon';
+  icon.innerHTML = AI_ICON_SVG;
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble ai';
+
+  blocks.forEach((block, bi) => {
+    let el;
+    if (block.type === 'highlight') {
+      el = document.createElement('div');
+      el.className = 'md-highlight md-block';
+      el.innerHTML = `
+        <div class="md-label">${block.label}</div>
+        <div class="md-value">${block.value}</div>
+        ${block.sub ? `<div class="md-sub">${block.sub}</div>` : ''}
+      `;
+    } else if (block.type === 'section') {
+      el = document.createElement('div');
+      el.className = 'md-block';
+      el.innerHTML = `<div class="md-section-title">${block.title}</div><div class="md-text">${block.text}</div>`;
+    } else {
+      el = document.createElement('div');
+      el.className = 'md-text md-block';
+      el.innerHTML = block.text;
+    }
+    // animate in with delay per block
+    el.style.cssText = `opacity:0;animation:wordFade 0.4s ease forwards;animation-delay:${bi * 180}ms`;
+    bubble.appendChild(el);
+  });
+
+  if (followups?.length) {
+    const chips = document.createElement('div');
+    chips.className = 'followup-chips';
+    chips.style.cssText = `opacity:0;animation:wordFade 0.4s ease forwards;animation-delay:${blocks.length * 180 + 100}ms`;
+    followups.forEach(label => {
+      const chip = document.createElement('button');
+      chip.className = 'followup-chip';
+      chip.textContent = label;
+      chip.onclick = () => {
+        const input = document.getElementById('chatInput');
+        input.value = label;
+        sendMessage();
+      };
+      chips.appendChild(chip);
+    });
+    bubble.appendChild(chips);
+  }
+
+  wrap.appendChild(icon);
+  wrap.appendChild(bubble);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
 function openAISuggestionChat() {
   openSheet();
   setTimeout(() => {
@@ -1476,14 +1550,25 @@ function openAISuggestionChat() {
     addBubble('user', userMsg);
     addTypingIndicator(userMsg).then(() => {
       removeTypingIndicator();
-      const reply1 = 'Na Twojej ostatniej fakturze pojawiły się dodatkowe opłaty za połączenia telefoniczne i transfer danych z zagranicy. Korzystanie z sieci bez aktywnego pakietu roamingowego wiąże się ze znacznie wyższymi stawkami niż w kraju.';
-      messages.push({ role: 'assistant', content: reply1 });
-      addBubble('ai', reply1);
-      setTimeout(() => {
-        const reply2 = 'Aby uniknąć takich kosztów w przyszłości, polecam aktywację pakietu Roaming Orange — zapewnia on z góry określony limit rozmów i internetu za granicą w znacznie niższej cenie. Chcesz, żebym pomógł Ci go włączyć?';
-        messages.push({ role: 'assistant', content: reply2 });
-        addBubble('ai', reply2);
-      }, 600);
+      addStructuredBubble([
+        {
+          type: 'highlight',
+          label: 'Kwota faktury',
+          value: '187,50 zł',
+          sub: 'Poprzednia faktura: 89,99 zł',
+        },
+        {
+          type: 'highlight',
+          label: 'Różnica',
+          value: '+97,51 zł',
+          sub: 'wzrost o ~108% względem poprzedniego miesiąca',
+        },
+        {
+          type: 'section',
+          title: 'Dlaczego?',
+          text: 'Na Twojej fakturze pojawiły się opłaty za <strong>połączenia telefoniczne i transfer danych za granicą</strong>. Korzystanie z sieci bez aktywnego pakietu roamingowego wiąże się ze znacznie wyższymi stawkami niż w kraju.',
+        },
+      ], ['Historia faktur', 'Włącz autopłatności', 'Pobierz fakturę']);
     });
   }, 500);
 }
