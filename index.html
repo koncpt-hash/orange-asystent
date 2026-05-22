@@ -369,7 +369,7 @@
         <button class="btn-circle" style="flex-shrink:0;">
           <img src="https://www.figma.com/api/mcp/asset/370e0e19-cea5-4a8b-8946-8a6583f760a8" width="24" height="24" alt="">
         </button>
-        <div class="chat-entry" onclick="openSheet()">
+        <div class="chat-entry" onclick="openSheet('start')">
           <img src="https://www.figma.com/api/mcp/asset/7cd796bb-e16b-418d-999e-03490998eff3" width="24" height="24" alt="" style="flex-shrink:0;">
           <span class="chat-entry-label">Poznaj asystenta AI</span>
         </div>
@@ -487,7 +487,7 @@
         <button class="btn-circle" style="flex-shrink:0;">
           <img src="https://www.figma.com/api/mcp/asset/370e0e19-cea5-4a8b-8946-8a6583f760a8" width="24" height="24" alt="">
         </button>
-        <div class="chat-entry" onclick="openSheet()" style="flex:1;">
+        <div class="chat-entry" onclick="openSheet('sklep')" style="flex:1;">
           <img src="https://www.figma.com/api/mcp/asset/7cd796bb-e16b-418d-999e-03490998eff3" width="24" height="24" alt="" style="flex-shrink:0;">
           <span class="chat-entry-label">Poznaj asystenta AI</span>
         </div>
@@ -824,14 +824,7 @@
       <div class="sheet-greeting-text">Cześć, <span class="name">Adam!</span></div>
       <div class="sheet-subtitle">Powiedz co chcesz załatwić.</div>
       <div style="height:26px;flex-shrink:0"></div>
-      <div class="welcome-chips" id="welcomeChips">
-        <button class="welcome-chip" onclick="fillInput(this)">Sprawdź moje rachunki</button>
-        <button class="welcome-chip" onclick="fillInput(this)">Potrzebuję kolejnego numeru</button>
-        <button class="welcome-chip" onclick="fillInput(this)">Chcę oglądać filmy i seriale</button>
-        <button class="welcome-chip" onclick="fillInput(this)">Pomóż mi wybrać światłowód</button>
-        <button class="welcome-chip" onclick="fillInput(this)">Przedłużam umowę</button>
-        <button class="welcome-chip" onclick="fillInput(this)">Mam sprawę do wyjaśnienia</button>
-      </div>
+      <div class="welcome-chips" id="welcomeChips"></div>
     </div>
 
     <!-- History state -->
@@ -944,7 +937,40 @@ const DEFAULT_AGENT_STEPS = [
 ];
 let isLoading = false;
 
-function openSheet() {
+const START_CHIPS = [
+  'Sprawdź moje rachunki',
+  'Potrzebuję kolejnego numeru',
+  'Chcę oglądać filmy i seriale',
+  'Pomóż mi wybrać światłowód',
+  'Przedłużam umowę',
+  'Mam sprawę do wyjaśnienia',
+];
+
+const SKLEP_CHIPS = [
+  'Pomóż mi wybrać telefon',
+  'Szukam telefonu do zdjęć',
+  'Jaki telefon będzie dla mnie najlepszy?',
+  'Potrzebuję nowego smartwatcha',
+  'Chcę lepsze słuchawki',
+  'Co warto kupić do telefonu?',
+  'Szukam telefonu na raty',
+  'Dobierz akcesoria do mojego telefonu',
+  'Chcę wymienić telefon',
+  'Szukam telefonu do pracy i rozrywki',
+];
+
+function buildWelcomeChips(source) {
+  const container = document.getElementById('welcomeChips');
+  const list = source === 'sklep'
+    ? [...SKLEP_CHIPS].sort(() => Math.random() - 0.5).slice(0, 6)
+    : START_CHIPS;
+  container.innerHTML = list
+    .map(t => `<button class="welcome-chip" onclick="fillInput(this)">${t}</button>`)
+    .join('');
+}
+
+function openSheet(source) {
+  buildWelcomeChips(source || 'start');
   document.getElementById('backdrop').classList.add('visible');
   document.getElementById('bottomSheet').classList.add('open');
   hideFloatingBtn();
