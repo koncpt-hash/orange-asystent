@@ -201,6 +201,11 @@
   .listing-search-placeholder { font-size: 12px; color: #999; font-weight: 700; }
   .listing-cards { display: flex; flex-direction: column; gap: 12px; padding-bottom: 16px; }
 
+  /* Listing AI chip bar */
+  .listing-chip-bar { flex-shrink: 0; background: white; border-top: 1px solid #f0f0f0; padding: 10px 16px 12px; display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .listing-chip-bar::-webkit-scrollbar { display: none; }
+  .listing-chip-bar .welcome-chip { white-space: nowrap; flex-shrink: 0; }
+
   /* Listing product card */
   .lcard { background: white; border-radius: 6px; box-shadow: 0 0 5px rgba(0,0,0,0.15); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
   .lcard-badges { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -952,6 +957,9 @@
       <!-- Product cards -->
       <div class="listing-cards" id="listingCards"></div>
     </div>
+
+    <!-- AI chip bar above tab bar -->
+    <div class="listing-chip-bar" id="listingChipBar"></div>
   </div>
 </div>
 
@@ -963,8 +971,42 @@ const LISTING_PHONES = [
   { name: 'Xiaomi 14T Pro 5G 512GB', badges: ['15 rat 0%'], emoji: '📱', color: 'Czarny', colors: ['#1c1c1e','#e8e8e8','#c0a882'], installment: '15 rat 0%', installmentAmt: '124,00 zł', priceOld: '3499,00 zł', priceNew: '2999,00 zł', note: 'Najniższa cena z ostatnich 30 dni przed obniżką 3699 zł' },
 ];
 
+const LISTING_CHIPS = [
+  'Pomóż mi wybrać telefon',
+  'Który ma najlepszy aparat?',
+  'Jaki telefon na raty 0%?',
+  'Porównaj modele Samsung i iPhone',
+  'Który telefon ma najdłuższy czas pracy baterii?',
+  'Dobierz telefon do 2000 zł',
+  'Jaki smartfon dla seniora?',
+  'Który model obsługuje 5G?',
+];
+
+function buildListingChips() {
+  const bar = document.getElementById('listingChipBar');
+  if (!bar) return;
+  const shuffled = [...LISTING_CHIPS].sort(() => Math.random() - 0.5).slice(0, 4);
+  bar.innerHTML = shuffled
+    .map(t => `<button class="welcome-chip" onclick="openSheetFromListing(this)">${t}</button>`)
+    .join('');
+}
+
+function openSheetFromListing(btn) {
+  showScreen('sklep');
+  setTimeout(() => openSheet('sklep'), 50);
+  setTimeout(() => {
+    const input = document.getElementById('chatInput');
+    if (input) {
+      input.value = btn.textContent;
+      input.dispatchEvent(new Event('input'));
+      input.focus();
+    }
+  }, 500);
+}
+
 function buildListingCards() {
   const container = document.getElementById('listingCards');
+  buildListingChips();
   container.innerHTML = LISTING_PHONES.map(p => `
     <div class="lcard">
       <div>
