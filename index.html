@@ -993,15 +993,12 @@ function buildListingChips() {
 }
 
 function openSheetFromListing(btn) {
+  const text = btn.textContent.trim();
   showScreen('sklep');
   setTimeout(() => openSheet('sklep'), 50);
   setTimeout(() => {
-    const input = document.getElementById('chatInput');
-    if (input) {
-      input.value = btn.textContent;
-      input.dispatchEvent(new Event('input'));
-      input.focus();
-    }
+    document.getElementById('chatInput').value = text;
+    sendMessage();
   }, 500);
 }
 
