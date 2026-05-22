@@ -2110,7 +2110,7 @@ async function sendMessage() {
   } catch (err) {
     await stepsPromise.catch(() => {});
     removeTypingIndicator();
-    addBubble('ai', 'Przepraszam, wystąpił problem z połączeniem. Spróbuj ponownie.');
+    addBubble('ai', 'Przepraszam, wystąpił problem z połączeniem. Spróbuj ponownie. [' + err.message + ']');
     console.error(err);
   }
 
