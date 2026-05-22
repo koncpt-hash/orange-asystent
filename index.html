@@ -246,12 +246,10 @@
   .sheet-greeting-text span.name { color: #F15E00; }
   .sheet-subtitle { font-size: 15px; font-weight: 500; color: #333; line-height: 22px; flex-shrink: 0; }
 
-  .chips-container { height: 136px; overflow: hidden; flex-shrink: 0; align-self: stretch; }
-  .chips-row { display: flex; gap: 8px; margin-bottom: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-behavior: auto; }
-  .chips-row::-webkit-scrollbar { display: none; }
-  .chip { flex-shrink: 0; background: white; border-radius: 80px; padding: 9px 14px; font-size: 14px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 1.5px rgba(0,0,0,0.12), 0 2px 12px rgba(0,0,0,0.08); border: 1.5px solid #a885d8; -webkit-tap-highlight-color: transparent; }
-  .chip:active { transform: scale(0.96); opacity: 0.8; }
-  .chips-inner-1, .chips-inner-2, .chips-inner-3 { display: flex; gap: 8px; width: max-content; }
+  .welcome-chips { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; padding: 4px 0 0; }
+  .welcome-chip { display: inline-flex; align-items: center; justify-content: center; padding: 8px 13px; border: none; border-radius: 60px; font-size: 14px; font-weight: 500; line-height: 18px; color: #31067F; background: #fff; cursor: pointer; white-space: nowrap; position: relative; -webkit-tap-highlight-color: transparent; transition: opacity 0.18s; }
+  .welcome-chip::before { content: ''; position: absolute; inset: 0; border-radius: 60px; padding: 1px; background: linear-gradient(90deg, #70A1FA, #AE80FF, #F8513E); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+  .welcome-chip:active { opacity: 0.7; }
 
   /* Chat */
   .sheet-chat { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; }
@@ -826,10 +824,13 @@
       <div class="sheet-greeting-text">Cześć, <span class="name">Adam!</span></div>
       <div class="sheet-subtitle">Powiedz co chcesz załatwić.</div>
       <div style="height:26px;flex-shrink:0"></div>
-      <div class="chips-container" id="chipsContainer">
-        <div class="chips-row" id="chipsScroll1"><div class="chips-inner-1" id="chipsRow1"></div></div>
-        <div class="chips-row" id="chipsScroll2"><div class="chips-inner-2" id="chipsRow2"></div></div>
-        <div class="chips-row" id="chipsScroll3"><div class="chips-inner-3" id="chipsRow3"></div></div>
+      <div class="welcome-chips" id="welcomeChips">
+        <button class="welcome-chip" onclick="fillInput(this)">Sprawdź moje rachunki</button>
+        <button class="welcome-chip" onclick="fillInput(this)">Potrzebuję kolejnego numeru</button>
+        <button class="welcome-chip" onclick="fillInput(this)">Chcę oglądać filmy i seriale</button>
+        <button class="welcome-chip" onclick="fillInput(this)">Pomóż mi wybrać światłowód</button>
+        <button class="welcome-chip" onclick="fillInput(this)">Przedłużam umowę</button>
+        <button class="welcome-chip" onclick="fillInput(this)">Mam sprawę do wyjaśnienia</button>
       </div>
     </div>
 
@@ -892,94 +893,6 @@ function openSklepChat(el) {
   sendMessage();
 }
 
-const FIXED_CHIPS = [
-  'Sprawdź moje płatności',
-  'Potrzebuję kolejnego numeru',
-  'Szukam nowego telefonu',
-  'Chcę zgłosić problem',
-];
-
-const RANDOM_CHIPS = [
-  'Którą prędkość światłowodu wybrać?',
-  'Chcę nowy telefon z numerem',
-  'Jakie masz telefony do 2000 zł?',
-  'Android czy iPhone - który lepszy?',
-  'Jaki plan pasuje do mojego zużycia?',
-  'Porównaj iPhone 15 i 16',
-  'Aktywuj roaming',
-  'Szukam telefonu na raty',
-  'Jak mogę obniżyć rachunki?',
-  'Internet działa mi wolno',
-  'Doradź mi pakiet',
-  'Ile internetu mi zostało?',
-  'Chcę internet z telewizją',
-  'Potrzebuję TV do filmów i seriali',
-  'Który telefon trzyma najdłużej na baterii?',
-  'Pracuję z domu i muszę mieć stabilny internet',
-  'Wieczorami chcę oglądać seriale',
-];
-
-function buildChips() {
-  const shuffled = [...RANDOM_CHIPS].sort(() => Math.random() - 0.5);
-  const chips = [...FIXED_CHIPS, ...shuffled.slice(0, 5)];
-  const rows = [chips.slice(0, 3), chips.slice(3, 6), chips.slice(6, 9)];
-
-  ['chipsRow1', 'chipsRow2', 'chipsRow3'].forEach((id, i) => {
-    const el = document.getElementById(id);
-    el.innerHTML = rows[i]
-      .map(t => `<div class="chip" onclick="fillInput(this)">${t}</div>`)
-      .join('');
-  });
-}
-
-function startChipAnimations() {
-  const SPEED = 0.08; // px per frame — bardzo wolno
-  const ids = ['chipsScroll1', 'chipsScroll2', 'chipsScroll3'];
-  const containers = ids.map(id => document.getElementById(id)).filter(Boolean);
-
-  let sharedPos = 0;
-  let dir = 1;
-  let userTouching = false;
-  let touchStartX = 0;
-  let lastTouchX = 0;
-  let resumeTimer;
-
-  function tick() {
-    if (!userTouching) {
-      const maxScroll = Math.min(...containers.map(c => c.scrollWidth - c.clientWidth));
-      if (maxScroll > 0) {
-        sharedPos += SPEED * dir;
-        if (sharedPos >= maxScroll) { sharedPos = maxScroll; dir = -1; }
-        else if (sharedPos <= 0)    { sharedPos = 0;         dir =  1; }
-        containers.forEach(c => { c.scrollLeft = sharedPos; });
-      }
-    }
-    requestAnimationFrame(tick);
-  }
-
-  const chipsContainer = document.getElementById('chipsContainer');
-
-  chipsContainer.addEventListener('touchstart', e => {
-    userTouching = true;
-    clearTimeout(resumeTimer);
-    touchStartX = e.touches[0].clientX;
-    lastTouchX = touchStartX;
-  }, { passive: true });
-
-  chipsContainer.addEventListener('touchmove', e => {
-    const dx = lastTouchX - e.touches[0].clientX;
-    lastTouchX = e.touches[0].clientX;
-    const maxScroll = Math.min(...containers.map(c => c.scrollWidth - c.clientWidth));
-    sharedPos = Math.max(0, Math.min(maxScroll, sharedPos + dx));
-    containers.forEach(c => { c.scrollLeft = sharedPos; });
-  }, { passive: true });
-
-  chipsContainer.addEventListener('touchend', () => {
-    resumeTimer = setTimeout(() => { userTouching = false; }, 1500);
-  }, { passive: true });
-
-  requestAnimationFrame(tick);
-}
 
 function updateClock() {
   const now = new Date();
@@ -989,8 +902,6 @@ function updateClock() {
 }
 updateClock();
 setInterval(updateClock, 10000);
-buildChips();
-
 const SYSTEM_PROMPT = `Jesteś Asystentem Orange AI — inteligentnym doradcą w aplikacji Mój Orange.
 
 PROFIL KLIENTA:
@@ -1038,7 +949,6 @@ function openSheet() {
   document.getElementById('bottomSheet').classList.add('open');
   hideFloatingBtn();
   setTimeout(() => {
-    startChipAnimations();
     document.getElementById('chatInput').focus();
   }, 450);
 }
@@ -1257,9 +1167,6 @@ function resetChat() {
   document.getElementById('sheetChat').style.display = 'none';
   document.getElementById('sheetHistory').style.display = 'none';
   document.getElementById('sheetWelcome').style.display = 'flex';
-  buildChips();
-  startChipAnimations();
-
   // Przywróć floating button do prawego dolnego rogu
   localStorage.removeItem('floatingBtnDeleted');
   const btn = document.getElementById('floatingBtn');
