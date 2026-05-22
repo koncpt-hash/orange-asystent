@@ -180,6 +180,50 @@
   .chat-carousel .product-card { width: 148px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
   .chat-carousel .product-img { height: 120px; font-size: 52px; }
 
+  /* Listing screen */
+  .listing-header { background: #000; height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; flex-shrink: 0; }
+  .listing-back { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
+  .listing-header-title { color: white; font-size: 16px; font-weight: 700; letter-spacing: -0.1px; }
+  .listing-body { flex: 1; overflow-y: auto; background: #f5f5f5; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .listing-breadcrumbs { display: flex; align-items: center; gap: 4px; }
+  .listing-bc-item { font-size: 12px; color: #444; }
+  .listing-bc-bold { font-weight: 700; color: #000; }
+  .listing-title-row { display: flex; flex-direction: column; gap: 6px; }
+  .listing-title { font-size: 24px; font-weight: 700; color: #000; letter-spacing: -0.2px; line-height: 28px; margin: 0; }
+  .listing-title-links { display: flex; justify-content: space-between; }
+  .listing-link { font-size: 14px; font-weight: 700; text-decoration: underline; color: #000; cursor: pointer; }
+  .listing-offer-bar { background: #000; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; }
+  .listing-offer-btn { background: #444; border-radius: 4px; color: white; font-size: 12px; font-weight: 700; padding: 8px 16px; }
+  .listing-offer-change { color: white; font-size: 14px; font-weight: 700; text-decoration: underline; cursor: pointer; }
+  .listing-filters { display: flex; gap: 6px; }
+  .listing-filter-btn { flex: 1; border: 1px solid #ccc; border-radius: 4px; background: white; padding: 10px; font-size: 12px; font-weight: 700; color: #000; cursor: pointer; }
+  .listing-search { background: white; display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-bottom: 2px solid #666; }
+  .listing-search-placeholder { font-size: 12px; color: #999; font-weight: 700; }
+  .listing-cards { display: flex; flex-direction: column; gap: 12px; padding-bottom: 16px; }
+
+  /* Listing product card */
+  .lcard { background: white; border-radius: 6px; box-shadow: 0 0 5px rgba(0,0,0,0.15); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .lcard-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .lcard-badge { background: #FFCC00; border-radius: 4px; font-size: 12px; font-weight: 700; padding: 5px 10px; }
+  .lcard-name { font-size: 22px; font-weight: 700; color: #000; line-height: 26px; letter-spacing: -0.3px; }
+  .lcard-rating { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #000; }
+  .lcard-rating span { color: #999; font-weight: 400; }
+  .lcard-img { display: flex; justify-content: center; align-items: center; height: 140px; font-size: 90px; }
+  .lcard-color-row { font-size: 14px; color: #000; margin-bottom: 6px; }
+  .lcard-color-row b { font-weight: 700; letter-spacing: -0.1px; }
+  .lcard-colors { display: flex; gap: 8px; margin-bottom: 12px; }
+  .lcard-color-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ccc; cursor: pointer; }
+  .lcard-installment-box { background: #f5f5f5; border-radius: 4px; padding: 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .lcard-installment-label { font-size: 12px; color: #000; margin-bottom: 4px; }
+  .lcard-installment-amount { font-size: 22px; font-weight: 700; color: #000; letter-spacing: -0.5px; }
+  .lcard-installment-link { font-size: 14px; font-weight: 700; text-decoration: underline; color: #000; cursor: pointer; margin-top: 8px; display: block; }
+  .lcard-price-row { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; margin-bottom: 4px; }
+  .lcard-price-label { font-size: 14px; color: #000; }
+  .lcard-price-old { font-size: 14px; color: #666; text-decoration: line-through; font-weight: 700; }
+  .lcard-price-new { font-size: 18px; font-weight: 700; color: #000; letter-spacing: -0.2px; }
+  .lcard-price-note { font-size: 11px; color: #444; text-align: right; }
+  .lcard-cta { background: #F16E00; border: none; border-radius: 4px; color: white; font-size: 14px; font-weight: 700; height: 40px; width: 100%; cursor: pointer; letter-spacing: -0.1px; }
+
   /* Apple zone tabs */
   .zone-tabs { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 12px; }
   .zone-tab { padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid #ddd; background: white; color: #444; }
@@ -525,7 +569,7 @@
       <div style="padding:20px 0 0;background:white;">
         <div class="sklep-section-header" style="padding:0 16px;"><span class="sklep-section-title">Produkty</span></div>
         <div class="cat-scroll" style="margin-top:12px; padding-left:16px;">
-          <div class="cat-item"><div class="cat-icon" style="background:#f0f0f0;">📱</div><span class="cat-label">Telefony</span></div>
+          <div class="cat-item" onclick="showScreen('listing')" style="cursor:pointer;"><div class="cat-icon" style="background:#f0f0f0;">📱</div><span class="cat-label">Telefony</span></div>
           <div class="cat-item"><div class="cat-icon" style="background:#f0f0f0;">🎧</div><span class="cat-label">Słuchawki</span></div>
           <div class="cat-item"><div class="cat-icon" style="background:#f0f0f0;">💻</div><span class="cat-label">Laptopy</span></div>
           <div class="cat-item"><div class="cat-icon" style="background:#f0f0f0;">⌚</div><span class="cat-label">Smart&shy;watche</span></div>
@@ -857,10 +901,123 @@
         </button>
       </div>
     </div>
+  <!-- ========== LISTING SCREEN ========== -->
+  <div class="screen" id="screenListing">
+    <!-- Header -->
+    <div class="listing-header">
+      <button class="listing-back" onclick="showScreen('sklep')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span class="listing-header-title">Smartfony</span>
+      <div style="width:40px;"></div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="listing-body">
+      <!-- Breadcrumbs -->
+      <div class="listing-breadcrumbs">
+        <span class="listing-bc-item">Dla Ciebie</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#666" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="listing-bc-item">Sklep</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#666" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="listing-bc-item listing-bc-bold">Smartfony</span>
+      </div>
+
+      <!-- Title + links -->
+      <div class="listing-title-row">
+        <h1 class="listing-title">Smartfony</h1>
+        <div class="listing-title-links">
+          <span class="listing-link">Zmień kategorię</span>
+          <span class="listing-link">🗂 Kup na firmę</span>
+        </div>
+      </div>
+
+      <!-- Offer bar -->
+      <div class="listing-offer-bar">
+        <div class="listing-offer-btn">Bez abonamentu</div>
+        <span class="listing-offer-change">Zmień</span>
+      </div>
+
+      <!-- Filters + Search -->
+      <div class="listing-filters">
+        <button class="listing-filter-btn">Filtruj</button>
+        <button class="listing-filter-btn">Sortuj</button>
+      </div>
+      <div class="listing-search">
+        <span class="listing-search-placeholder">Wyszukaj urządzenie</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#999" stroke-width="2"/><path d="M21 21l-4.35-4.35" stroke="#999" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+
+      <!-- Product cards -->
+      <div class="listing-cards" id="listingCards"></div>
+    </div>
+  </div>
   </div>
 </div>
 
 <script>
+const LISTING_PHONES = [
+  { name: 'Motorola moto g8 power', badges: ['Funkcja eSIM', '15 rat 0%'], emoji: '📱', color: 'Czarny', colors: ['#1c1c1e','#e8e8e8','#c0a882','#4a90d9','#8b4513'], installment: '15 rat 0%', installmentAmt: '93,27 zł', priceOld: '1299,00 zł', priceNew: '1399,00 zł', note: 'Najniższa cena z ostatnich 30 dni przed obniżką 1599 zł' },
+  { name: 'Apple iPhone 17 Pro Max 256GB', badges: ['Funkcja eSIM'], emoji: '📱', color: 'Naturalny tytan', colors: ['#b0a090','#1c1c1e','#e8e4de','#4a5568'], installment: 'Raty od', installmentAmt: '188,46 zł', priceOld: null, priceNew: '5799,00 zł', note: null },
+  { name: 'Samsung Galaxy S21 128 GB', badges: ['Raty 0%', 'Funkcja eSIM'], emoji: '📱', color: 'Niebieski', colors: ['#2563eb','#1c1c1e','#e8e8e8','#a855f7','#10b981'], installment: 'Razem za urządzenie', installmentAmt: null, priceOld: '1299,00 zł', priceNew: '1399,00 zł', note: 'Najniższa cena z ostatnich 30 dni przed obniżką 3899 zł' },
+  { name: 'Xiaomi 14T Pro 5G 512GB', badges: ['15 rat 0%'], emoji: '📱', color: 'Czarny', colors: ['#1c1c1e','#e8e8e8','#c0a882'], installment: '15 rat 0%', installmentAmt: '124,00 zł', priceOld: '3499,00 zł', priceNew: '2999,00 zł', note: 'Najniższa cena z ostatnich 30 dni przed obniżką 3699 zł' },
+];
+
+function buildListingCards() {
+  const container = document.getElementById('listingCards');
+  container.innerHTML = LISTING_PHONES.map(p => `
+    <div class="lcard">
+      <div>
+        <div class="lcard-badges">${p.badges.map(b => `<span class="lcard-badge">${b}</span>`).join('')}</div>
+        <div class="lcard-name" style="margin-top:8px;">${p.name}</div>
+        <div class="lcard-rating" style="margin-top:6px;">⭐ 5,0 <span>(1 opinia)</span></div>
+      </div>
+      <div class="lcard-img">${p.emoji}</div>
+      <div>
+        <div class="lcard-color-row">Kolor: <b>${p.color}</b></div>
+        <div class="lcard-colors">${p.colors.map(c => `<div class="lcard-color-dot" style="background:${c};border-color:${c === '#e8e8e8' ? '#ccc' : c};"></div>`).join('')}</div>
+        <div class="lcard-installment-box">
+          <div>
+            <div class="lcard-installment-label">Możesz kupić na raty</div>
+            <div style="display:flex;align-items:baseline;gap:6px;">
+              <span style="font-size:13px;font-weight:700;">${p.installment}</span>
+              ${p.installmentAmt ? `<span class="lcard-installment-amount">${p.installmentAmt}</span>` : ''}
+            </div>
+            <a class="lcard-installment-link">Sprawdź raty</a>
+          </div>
+        </div>
+        <div class="lcard-price-row">
+          <span class="lcard-price-label">Cena za urządzenie</span>
+          <div style="display:flex;gap:8px;align-items:baseline;">
+            ${p.priceOld ? `<span class="lcard-price-old">${p.priceOld}</span>` : ''}
+            <span class="lcard-price-new">${p.priceNew}</span>
+          </div>
+        </div>
+        ${p.note ? `<div class="lcard-price-note">${p.note}</div>` : ''}
+      </div>
+      <button class="lcard-cta">Dodaj do koszyka</button>
+    </div>
+  `).join('');
+}
+
+function showScreen(name) {
+  const allScreens = ['screenSklep', 'screenListing'];
+  allScreens.forEach(id => document.getElementById(id).classList.remove('active'));
+  const startContent = document.querySelector('.content');
+  const statusBar = document.querySelector('.status-bar');
+
+  if (name === 'sklep') {
+    startContent.style.display = 'none';
+    statusBar.style.display = 'none';
+    document.getElementById('screenSklep').classList.add('active');
+  } else if (name === 'listing') {
+    startContent.style.display = 'none';
+    statusBar.style.display = 'none';
+    buildListingCards();
+    document.getElementById('screenListing').classList.add('active');
+  }
+}
+
 function showNav(screen) {
   const tabs = ['start', 'dlaciebie', 'zarzadzaj', 'sklep', 'ustawienia'];
   tabs.forEach(t => {
@@ -873,6 +1030,7 @@ function showNav(screen) {
   const startContent = document.querySelector('.content');
   const statusBar = document.querySelector('.status-bar');
   document.getElementById('screenSklep').classList.remove('active');
+  document.getElementById('screenListing').classList.remove('active');
 
   if (screen === 'sklep') {
     startContent.style.display = 'none';
