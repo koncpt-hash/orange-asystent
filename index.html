@@ -1573,7 +1573,22 @@ function isPhoneQuery(text) {
   return ['telefon', 'smartfon', 'iphone', 'samsung', 'pixel', 'xiaomi', 'huawei', 'motorola', 'oppo', 'oneplus', 'android', 'smartwatch', 'słuchawk', 'akcesor', 'raty', 'urządzenie'].some(k => q.includes(k));
 }
 
-function addPhoneCarousel(afterEl) {
+const PHONE_FOLLOWUPS = [
+  'Który ma najlepszy aparat?',
+  'Który trzyma najdłużej na baterii?',
+  'Czy mogę wziąć z abonamentem?',
+  'Które są dostępne na raty 0%?',
+  'Jaki wybrać do gier?',
+  'Porównaj te modele',
+  'Który jest wodoszczelny?',
+  'Jaki telefon do 2000 zł?',
+  'Który polecasz dla seniora?',
+  'Masz coś z dużym ekranem?',
+  'Który aparat robi najlepsze nocne zdjęcia?',
+  'Czy te telefony są objęte gwarancją?',
+];
+
+function addPhoneCarousel(query) {
   const msgs = document.getElementById('chatMessages');
   const wrap = document.createElement('div');
   wrap.className = 'chat-carousel-wrap';
@@ -1605,8 +1620,25 @@ function addPhoneCarousel(afterEl) {
       </div>`;
   });
 
+  // Follow-up chips — 3 random, stacked vertically
+  const picked = [...PHONE_FOLLOWUPS].sort(() => Math.random() - 0.5).slice(0, 3);
+  const chipsWrap = document.createElement('div');
+  chipsWrap.className = 'followup-chips';
+  chipsWrap.style.cssText = 'opacity:0;animation:wordFade 0.4s ease forwards;animation-delay:600ms';
+  picked.forEach(q => {
+    const btn = document.createElement('button');
+    btn.className = 'followup-chip';
+    btn.textContent = q;
+    btn.onclick = () => {
+      document.getElementById('chatInput').value = q;
+      sendMessage();
+    };
+    chipsWrap.appendChild(btn);
+  });
+
   wrap.appendChild(label);
   wrap.appendChild(carousel);
+  wrap.appendChild(chipsWrap);
   msgs.appendChild(wrap);
   msgs.scrollTop = msgs.scrollHeight;
 }
