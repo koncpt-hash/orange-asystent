@@ -1629,7 +1629,12 @@ async function finalizeClarifyingFlow() {
       body: JSON.stringify({ messages, system: SYSTEM_PROMPT }),
     });
     const data = await response.json();
-    if (data.error) throw new Error(data.error);
+    if (data.error) {
+      const msg = data.error.toLowerCase().includes('overload')
+        ? 'Asystent jest chwilowo przeciążony. Spróbuj za kilka sekund 🙂'
+        : 'Przepraszam, wystąpił błąd. Spróbuj ponownie.';
+      throw new Error(msg);
+    }
     await stepsPromise;
     removeTypingIndicator();
     const reply = data.content?.[0]?.text || 'Przepraszam, coś poszło nie tak.';
@@ -1638,7 +1643,7 @@ async function finalizeClarifyingFlow() {
   } catch (err) {
     await stepsPromise.catch(() => {});
     removeTypingIndicator();
-    addBubble('ai', 'Przepraszam, wystąpił problem z połączeniem.');
+    addBubble('ai', err.message || 'Przepraszam, wystąpił problem z połączeniem. Spróbuj ponownie.');
     console.error(err);
   }
   isLoading = false;
@@ -2100,7 +2105,12 @@ async function sendMessage() {
       body: JSON.stringify({ messages, system: SYSTEM_PROMPT }),
     });
     const data = await response.json();
-    if (data.error) throw new Error(data.error);
+    if (data.error) {
+      const msg = data.error.toLowerCase().includes('overload')
+        ? 'Asystent jest chwilowo przeciążony. Spróbuj za kilka sekund 🙂'
+        : 'Przepraszam, wystąpił błąd. Spróbuj ponownie.';
+      throw new Error(msg);
+    }
     await stepsPromise;
     removeTypingIndicator();
     const reply = data.content?.[0]?.text || 'Przepraszam, coś poszło nie tak.';
@@ -2110,7 +2120,7 @@ async function sendMessage() {
   } catch (err) {
     await stepsPromise.catch(() => {});
     removeTypingIndicator();
-    addBubble('ai', 'Przepraszam, wystąpił problem z połączeniem. Spróbuj ponownie. [' + err.message + ']');
+    addBubble('ai', err.message || 'Przepraszam, wystąpił problem z połączeniem. Spróbuj ponownie.');
     console.error(err);
   }
 
