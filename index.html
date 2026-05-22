@@ -172,6 +172,14 @@
   .product-installment { font-size: 11px; color: #555; margin-top: 3px; }
   .product-note { font-size: 10px; color: #999; margin-top: 3px; line-height: 14px; }
 
+  /* Phone carousel in chat */
+  .chat-carousel-wrap { width: 100%; margin-top: 14px; }
+  .chat-carousel-label { font-size: 12px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+  .chat-carousel { display: flex; gap: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .chat-carousel::-webkit-scrollbar { display: none; }
+  .chat-carousel .product-card { width: 148px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+  .chat-carousel .product-img { height: 120px; font-size: 52px; }
+
   /* Apple zone tabs */
   .zone-tabs { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 12px; }
   .zone-tab { padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid #ddd; background: white; color: #444; }
@@ -1550,6 +1558,59 @@ const AI_ICON_SVG = `<svg width="24" height="24" viewBox="0 0 40 40" fill="none"
   <rect width="12.4578" height="2.77601" transform="matrix(0.690629 -0.72321 0.723213 0.690625 14.1865 25.5254)" fill="white"/>
 </svg>`;
 
+const PHONE_CATALOG = [
+  { name: 'iPhone 16 Pro', price: '5 499 zł', old: '5 999 zł', installment: '229 zł/mies.', emoji: '📱', bg: 'linear-gradient(160deg,#1c1c1e,#3a3a3c)', discount: '-8%' },
+  { name: 'Samsung Galaxy S25', price: '4 299 zł', old: '4 899 zł', installment: '179 zł/mies.', emoji: '📱', bg: 'linear-gradient(160deg,#0a1628,#1e3a5f)', discount: '-12%' },
+  { name: 'Xiaomi 14T Pro', price: '2 999 zł', old: '3 499 zł', installment: '124 zł/mies.', emoji: '📱', bg: 'linear-gradient(160deg,#1a1a2e,#ff6b35)', discount: '-14%' },
+  { name: 'Samsung Galaxy A55', price: '1 799 zł', old: '2 199 zł', installment: '74 zł/mies.', emoji: '📱', bg: 'linear-gradient(160deg,#f0eaff,#d4b8ff)', discount: '-18%' },
+  { name: 'Google Pixel 9', price: '3 799 zł', old: '4 199 zł', installment: '158 zł/mies.', emoji: '📱', bg: 'linear-gradient(160deg,#e8f4ff,#b8d8ff)', discount: '-9%' },
+  { name: 'OnePlus 13', price: '3 299 zł', old: '3 799 zł', installment: '137 zł/mies.', emoji: '📱', bg: 'linear-gradient(160deg,#1a2a1a,#2d5a2d)', discount: '-13%' },
+];
+
+function isPhoneQuery(text) {
+  if (!text) return false;
+  const q = text.toLowerCase();
+  return ['telefon', 'smartfon', 'iphone', 'samsung', 'pixel', 'xiaomi', 'huawei', 'motorola', 'oppo', 'oneplus', 'android', 'smartwatch', 'słuchawk', 'akcesor', 'raty', 'urządzenie'].some(k => q.includes(k));
+}
+
+function addPhoneCarousel(afterEl) {
+  const msgs = document.getElementById('chatMessages');
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-carousel-wrap';
+  wrap.style.cssText = 'opacity:0;animation:wordFade 0.4s ease forwards;animation-delay:400ms';
+
+  const label = document.createElement('div');
+  label.className = 'chat-carousel-label';
+  label.textContent = 'Polecane telefony';
+
+  const carousel = document.createElement('div');
+  carousel.className = 'chat-carousel';
+
+  const shuffled = [...PHONE_CATALOG].sort(() => Math.random() - 0.5).slice(0, 4);
+  shuffled.forEach(p => {
+    carousel.innerHTML += `
+      <div class="product-card">
+        <div class="product-img" style="background:${p.bg};">
+          <span>${p.emoji}</span>
+          <div class="discount-badge">${p.discount}</div>
+        </div>
+        <div class="product-info">
+          <div class="product-name">${p.name}</div>
+          <div class="product-price-row">
+            <span class="product-price-new">${p.price}</span>
+            <span class="product-price-old">${p.old}</span>
+          </div>
+          <div class="product-installment">od ${p.installment}</div>
+        </div>
+      </div>`;
+  });
+
+  wrap.appendChild(label);
+  wrap.appendChild(carousel);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
 function addBubble(role, text) {
   const msgs = document.getElementById('chatMessages');
   if (role === 'ai') {
@@ -1808,6 +1869,7 @@ async function sendMessage() {
     const reply = data.content?.[0]?.text || 'Przepraszam, coś poszło nie tak.';
     messages.push({ role: 'assistant', content: reply });
     addBubble('ai', reply);
+    if (isPhoneQuery(text)) addPhoneCarousel();
   } catch (err) {
     await stepsPromise.catch(() => {});
     removeTypingIndicator();
