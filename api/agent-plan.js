@@ -5,6 +5,37 @@ const DEFAULT_STEPS = [
   { title: 'Przygotowuję odpowiedź', hint: 'Najlepsze rozwiązanie dla Ciebie' },
 ];
 
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function callAnthropic(body, retries = 2) {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) return data;
+
+    const isOverloaded = data?.error?.type === 'overloaded_error' ||
+      (data?.error?.message || '').toLowerCase().includes('overload');
+
+    if (isOverloaded && attempt < retries - 1) {
+      await sleep(1000);
+      continue;
+    }
+
+    console.error('agent-plan API error:', response.status, JSON.stringify(data));
+    throw new Error(`API ${response.status}`);
+  }
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -18,17 +49,10 @@ module.exports = async function handler(req, res) {
   if (!query) return res.status(200).json({ steps: DEFAULT_STEPS });
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 500,
-        system: `Jesteś asystentem Orange Polska. Na podstawie zapytania użytkownika zwróć JSON z listą 3-5 kroków które asystent wykona żeby odpowiedzieć.
+    const data = await callAnthropic({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 500,
+      system: `Jesteś asystentem Orange Polska. Na podstawie zapytania użytkownika zwróć JSON z listą 3-5 kroków które asystent wykona żeby odpowiedzieć.
 
 Każdy krok: title (co robi asystent, max 5 słów, czasownik w 1os. l.poj.) i hint (konkretne dane których szuka, max 8 słów).
 
@@ -43,21 +67,12 @@ Dostosuj kroki i ich kolejność do kontekstu:
 Przykłady tytułów: "Sprawdzam dostępne modele", "Analizuję Twój abonament", "Szukam najlepszej oferty", "Przeglądam historię płatności", "Sprawdzam pakiety roamingowe", "Weryfikuję warunki umowy"
 
 Odpowiedz TYLKO valid JSON bez markdown: { "steps": [{"title": "...", "hint": "..."}] }`,
-        messages: [{ role: 'user', content: query }],
-      }),
+      messages: [{ role: 'user', content: query }],
     });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error('agent-plan API error:', response.status, JSON.stringify(data));
-      throw new Error(`API ${response.status}`);
-    }
 
     const text = data.content?.[0]?.text || '';
     console.log('agent-plan raw response:', text);
 
-    // Strip markdown code fences if present
     const clean = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
     const parsed = JSON.parse(clean);
 
