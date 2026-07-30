@@ -181,6 +181,24 @@
   .chat-carousel .product-card { width: 148px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
   .chat-carousel .product-img { height: 120px; font-size: 52px; }
 
+  /* Plan carousel in chat */
+  .plan-carousel { display: flex; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; margin-top: 12px; }
+  .plan-carousel::-webkit-scrollbar { display: none; }
+  .plan-card { flex-shrink: 0; width: 200px; background: white; border: 2px solid #ccc; border-radius: 8px; padding: 20px 16px 16px; position: relative; display: flex; flex-direction: column; gap: 0; }
+  .plan-card-letter { position: absolute; top: 6px; left: 10px; font-size: 40px; font-weight: 700; color: #ddd; line-height: 1; letter-spacing: -1px; }
+  .plan-card-header { text-align: center; margin-bottom: 16px; }
+  .plan-card-name { font-size: 14px; font-weight: 500; color: #444; margin-bottom: 4px; }
+  .plan-card-data { font-size: 30px; font-weight: 700; color: #232323; line-height: 34px; }
+  .plan-price-block { text-align: center; padding: 6px 0; }
+  .plan-price-row { display: flex; align-items: baseline; justify-content: center; gap: 4px; }
+  .plan-price-amount { font-size: 34px; font-weight: 700; color: #F16E00; line-height: 38px; }
+  .plan-price-unit { font-size: 18px; font-weight: 700; color: #444; line-height: 24px; }
+  .plan-price-period { font-size: 12px; font-weight: 700; color: #444; line-height: 18px; }
+  .plan-divider { height: 2px; background: #eee; margin: 8px auto; width: 100%; }
+  .plan-card-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+  .plan-btn-primary { background: #F16E00; color: white; border: none; border-radius: 4px; font-size: 14px; font-weight: 700; height: 40px; cursor: pointer; width: 100%; }
+  .plan-btn-secondary { background: white; color: #232323; border: 2px solid #232323; border-radius: 4px; font-size: 14px; font-weight: 700; height: 40px; cursor: pointer; width: 100%; }
+
   /* Listing screen */
   .listing-header { background: #000; height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; flex-shrink: 0; }
   .listing-back { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
@@ -1482,6 +1500,16 @@ let activeFlow = null;
 
 function fillInput(chip) {
   const text = chip.textContent.trim();
+  if (text === 'Chcę nowy numer') {
+    switchToChat();
+    addBubble('user', text);
+    messages.push({ role: 'user', content: text });
+    setTimeout(() => {
+      addBubble('ai', 'Przygotowałem dla Ciebie propozycje planów komórkowych.\nZapoznaj się z nimi, a jeśli masz dodatkowe pytania, zadaj je w wiadomości, a postaram się odpowiedzieć.');
+      addPlanCarousel();
+    }, 400);
+    return;
+  }
   if (CLARIFYING_FLOWS[text]) {
     startClarifyingFlow(text, CLARIFYING_FLOWS[text]);
     return;
@@ -1765,6 +1793,63 @@ const AI_ICON_SVG = `<svg width="24" height="24" viewBox="0 0 40 40" fill="none"
   <path d="M33.0334 18.9624C25.4106 18.9624 16.5167 27.8563 16.5167 35.4791C16.5167 27.8563 7.62283 18.9624 0 18.9624C7.62283 18.9624 16.5167 10.0686 16.5167 2.4458C16.5167 10.0686 25.4106 18.9624 33.0334 18.9624Z" fill="#FF7900"/>
   <rect width="12.4578" height="2.77601" transform="matrix(0.690629 -0.72321 0.723213 0.690625 14.1865 25.5254)" fill="white"/>
 </svg>`;
+
+const PLAN_CATALOG = [
+  { letter: 'S', name: 'Plan S', data: '50 GB', price1: '0', period1: 'od 1. do 5. mies.', price2: '70', period2: 'od 6. do 24. mies.' },
+  { letter: 'M', name: 'Plan M', data: '100 GB', price1: '0', period1: 'od 1. do 5. mies.', price2: '90', period2: 'od 6. do 24. mies.' },
+  { letter: 'L', name: 'Plan L', data: '150 GB', price1: '0', period1: 'od 1. do 5. mies.', price2: '110', period2: 'od 6. do 24. mies.' },
+  { letter: 'XL', name: 'Plan XL', data: '200 GB', price1: '0', period1: 'od 1. do 5. mies.', price2: '130', period2: 'od 6. do 24. mies.' },
+];
+
+function addPlanCarousel() {
+  const msgs = document.getElementById('chatMessages');
+
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-carousel-wrap';
+  wrap.style.cssText = 'opacity:0;animation:wordFade 0.4s ease forwards;animation-delay:300ms';
+
+  const label = document.createElement('div');
+  label.className = 'chat-carousel-label';
+  label.textContent = 'Dostępne plany';
+
+  const carousel = document.createElement('div');
+  carousel.className = 'plan-carousel';
+
+  PLAN_CATALOG.forEach(p => {
+    carousel.innerHTML += `
+      <div class="plan-card">
+        <div class="plan-card-letter">${p.letter}</div>
+        <div class="plan-card-header">
+          <div class="plan-card-name">${p.name}</div>
+          <div class="plan-card-data">${p.data}</div>
+        </div>
+        <div class="plan-price-block">
+          <div class="plan-price-row">
+            <span class="plan-price-amount">${p.price1}</span>
+            <span class="plan-price-unit">zł/mies.</span>
+          </div>
+          <div class="plan-price-period">${p.period1}</div>
+        </div>
+        <div class="plan-divider"></div>
+        <div class="plan-price-block">
+          <div class="plan-price-row">
+            <span class="plan-price-amount">${p.price2}</span>
+            <span class="plan-price-unit">zł/mies.</span>
+          </div>
+          <div class="plan-price-period">${p.period2}</div>
+        </div>
+        <div class="plan-card-actions">
+          <button class="plan-btn-primary">Wybieram</button>
+          <button class="plan-btn-secondary">Szczegóły oferty</button>
+        </div>
+      </div>`;
+  });
+
+  wrap.appendChild(label);
+  wrap.appendChild(carousel);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
 
 const PHONE_CATALOG = [
   { name: 'iPhone 16 Pro', price: '5 499 zł', old: '5 999 zł', installment: '229 zł/mies.', emoji: '📱', bg: 'linear-gradient(160deg,#1c1c1e,#3a3a3c)', discount: '-8%' },
