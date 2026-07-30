@@ -1859,8 +1859,27 @@ function addPlanCarousel() {
       </div>`;
   });
 
+  const planFollowups = [
+    'Wyjaśnij mi promocje',
+    'Ile GB naprawdę potrzebuję?',
+    'Czym różni się M od L?',
+    'Ile średnio miesięcznie zapłacę?',
+    'Pomóż mi wybrać',
+  ];
+  const chipsWrap = document.createElement('div');
+  chipsWrap.className = 'followup-chips';
+  chipsWrap.style.cssText = 'opacity:0;animation:wordFade 0.4s ease forwards;animation-delay:500ms';
+  planFollowups.forEach(q => {
+    const btn = document.createElement('button');
+    btn.className = 'welcome-chip';
+    btn.textContent = q;
+    btn.onclick = () => fillInput(btn);
+    chipsWrap.appendChild(btn);
+  });
+
   wrap.appendChild(label);
   wrap.appendChild(carousel);
+  wrap.appendChild(chipsWrap);
   msgs.appendChild(wrap);
   msgs.scrollTop = msgs.scrollHeight;
 }
