@@ -1795,10 +1795,9 @@ const AI_ICON_SVG = `<svg width="24" height="24" viewBox="0 0 40 40" fill="none"
 </svg>`;
 
 const PLAN_CATALOG = [
-  { letter: 'S', name: 'Plan S', data: '50 GB', price1: '0', period1: 'od 1. do 5. mies.', price2: '70', period2: 'od 6. do 24. mies.' },
-  { letter: 'M', name: 'Plan M', data: '100 GB', price1: '0', period1: 'od 1. do 5. mies.', price2: '90', period2: 'od 6. do 24. mies.' },
-  { letter: 'L', name: 'Plan L', data: '150 GB', price1: '0', period1: 'od 1. do 5. mies.', price2: '110', period2: 'od 6. do 24. mies.' },
-  { letter: 'XL', name: 'Plan XL', data: '200 GB', price1: '0', period1: 'od 1. do 5. mies.', price2: '130', period2: 'od 6. do 24. mies.' },
+  { letter: 'S', name: 'Plan S', data: '150 GB', price1: '0', period1: 'od 1. do 5. mies.', price2: '70', period2: 'od 6. do 24. mies.' },
+  { letter: 'M', name: 'Plan M', data: '500 GB', price1: '80', period1: 'od 1. do 24. mies.', price2: null, period2: null },
+  { letter: 'L', name: 'Plan L', data: 'bez limitu', price1: '100', period1: 'od 1. do 24. mies.', price2: null, period2: null },
 ];
 
 function addPlanCarousel() {
@@ -1816,6 +1815,15 @@ function addPlanCarousel() {
   carousel.className = 'plan-carousel';
 
   PLAN_CATALOG.forEach(p => {
+    const secondPrice = p.price2 ? `
+        <div class="plan-divider"></div>
+        <div class="plan-price-block">
+          <div class="plan-price-row">
+            <span class="plan-price-amount">${p.price2}</span>
+            <span class="plan-price-unit">zł/mies.</span>
+          </div>
+          <div class="plan-price-period">${p.period2}</div>
+        </div>` : '';
     carousel.innerHTML += `
       <div class="plan-card">
         <div class="plan-card-letter">${p.letter}</div>
@@ -1830,14 +1838,7 @@ function addPlanCarousel() {
           </div>
           <div class="plan-price-period">${p.period1}</div>
         </div>
-        <div class="plan-divider"></div>
-        <div class="plan-price-block">
-          <div class="plan-price-row">
-            <span class="plan-price-amount">${p.price2}</span>
-            <span class="plan-price-unit">zł/mies.</span>
-          </div>
-          <div class="plan-price-period">${p.period2}</div>
-        </div>
+        ${secondPrice}
         <div class="plan-card-actions">
           <button class="plan-btn-primary">Wybieram</button>
           <button class="plan-btn-secondary">Szczegóły oferty</button>
