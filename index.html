@@ -1475,6 +1475,19 @@ function restoreConversation(index) {
   document.getElementById('sheetChat').style.display = 'flex';
 }
 
+const PLAN_HELPER_FLOW = [
+  {
+    q: '1/3 · Jak korzystasz z internetu w telefonie?',
+    type: 'radio',
+    chips: [
+      '💬 Głównie wiadomości i przeglądanie',
+      '📱 Sporo — social media, YouTube, muzyka',
+      '💻 To moje główne łącze (hotspot, praca)',
+      '🤷 Trudno powiedzieć',
+    ],
+  },
+];
+
 const CLARIFYING_FLOWS = {
   'Potrzebuję kolejnego numeru': [
     {
@@ -1505,6 +1518,19 @@ let activeFlow = null;
 
 function fillInput(chip) {
   const text = chip.textContent.trim();
+  if (text === 'Pomóż mi wybrać') {
+    switchToChat();
+    addBubble('user', text);
+    messages.push({ role: 'user', content: text });
+    setTimeout(() => {
+      addBubble('ai', 'Jasne, dobiorę coś dla Ciebie. Zadam Ci 3 krótkie pytania — zajmie to mniej niż minutę. 👇');
+      setTimeout(() => {
+        activeFlow = { steps: PLAN_HELPER_FLOW, stepIndex: 0, currentChecklistEl: null, currentChecked: new Set() };
+        showNextClarifyStep();
+      }, 500);
+    }, 400);
+    return;
+  }
   if (text === 'Chcę nowy numer') {
     switchToChat();
     addBubble('user', text);
